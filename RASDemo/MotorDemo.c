@@ -1,5 +1,3 @@
-#include "RASDemo.h"
-
 #include <RASLib/inc/common.h>
 #include <RASLib/inc/motor.h>
 
@@ -9,7 +7,7 @@ static tBoolean initialized = false;
 void initMotors(void) {
     if (!initialized) {
       initialized = true;
-      
+
       Motors[0] = InitializeServoMotor(PIN_B6, false);
       Motors[1] = InitializeServoMotor(PIN_B7, false);
       Motors[2] = InitializeServoMotor(PIN_C4, false);
@@ -20,24 +18,24 @@ void initMotors(void) {
 
 void motorDemo(void) {
     float left = 0, right = 0, speed = 0.75f, accel = 0.01f;
-    char ch;    
+    char ch;
     int i;
 
     Printf("Press:\n"
 	   "  w-forward\n"
 	   "  s-backward\n"
 	   "  a-left\n"
-	   "  d-right\n"    
+	   "  d-right\n"
            "  i-slowly forward\n"
 	   "  k-slowly backward\n"
 	   "  j-slowly left\n"
-	   "  l-slowly right\n"    
+	   "  l-slowly right\n"
            "  space-stop\n"
 	   "  enter-quit\n");
-  
+
     // wait for the user to enter a character
     ch = ' ';
-    
+
     while (ch != '\n') {
         switch (ch) {
             case 'w':
@@ -73,7 +71,7 @@ void motorDemo(void) {
                 left -= accel;
                 break;
             default:
-                left = 0; 
+                left = 0;
                 right = 0;
                 break;
         }
@@ -83,12 +81,12 @@ void motorDemo(void) {
         SetMotor(Motors[2], right);
         SetMotor(Motors[3], right);
         Printf(" set motor to %1.2f %1.2f  \r", left, right);
-        
+
         ch = Getc();
-    } 
-   
-    // make sure the motors are off before exiting the demo 
-    for (i = 0; i < 4; ++i) 
+    }
+
+    // make sure the motors are off before exiting the demo
+    for (i = 0; i < 4; ++i)
       SetMotor(Motors[i], 0);
     Printf("\n");
 }
