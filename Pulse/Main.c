@@ -30,6 +30,12 @@ void GhettoPrintf(char *message,tTime number){
   Printf("%s: %d.%d\n", message, (int) ((long)number / 10000), (int) ((long)number % 10000));
 }
 
+// Timestamp info and Diagnostics
+int iteration = 0;
+int time_faults_cumulative = 0;
+
+
+
 // Where everything happens
 void pulsePin(void){
 
@@ -80,7 +86,7 @@ void pulsePin(void){
       // Defense against time travelling GetTimeUS()
       // Generally speaking, GetTimeUS() will time travel twice on boot
       if( time_remaining_previous < time_remaining) {
-	GhettoPrintf("Time fault",time_remaining);
+	//GhettoPrintf("Time fault",time_remaining);
 	time_faults += 1;
 	break;
       }
@@ -122,29 +128,41 @@ void pulsePin(void){
     distances[i+5] = distance_2;
     
     // Print out info
+    
     Printf("Time 1: %d us\n", time_1);
     Printf("Time 2: %d us\n", time_2);
     Printf("Distance 1: %f cm\n", distance_1);
     Printf("Distance 2: %f cm\n", distance_2);
     Printf("\n");
+    
   }
 
   // Time computation
   unsigned long execution_time = (long) GetTimeUS() - loop_start_time;
   
   // Print out info
-  GhettoPrintf("Execution time",execution_time);
-  if(time_faults > 0) {
-    Printf("Time faults: %d\n",time_faults);
-  }
+  Printf("Iteration: %d\n",iteration);
+  Printf("Cumulative time faults: %d\n", time_faults_cumulative);
+  GhettoPrintf("Execution time (us)",execution_time);
+  Printf("Time faults: %d\n",time_faults);
+  time_faults_cumulative += time_faults;
+
+  /*
   for(int i=0;i < 10; i++) {
     Printf("Distance %d:%d cm\n",i,distances[i]);
   }
+  Printf("\n");
+  */
+  
+  // Timestamp update
+  iteration += 1;
+  
 }
 
 int main(void){
   
   Printf("Hello World\n\n");
+  //CallEveryUS(pulsePin, 0, 60000);
   CallEvery(pulsePin, 0, 1);
 
   return 0;
