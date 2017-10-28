@@ -11,6 +11,12 @@
 #include <StellarisWare/driverlib/rom.h>
 #include <StellarisWare/driverlib/timer.h>
 #include <StellarisWare/driverlib/systick.h>
+#include <RASLib/inc/motor.h>
+
+tMotor *left;
+tMotor *right;
+
+
 
 tBoolean led_on;
 
@@ -41,9 +47,18 @@ void GhettoPrintf(char *message,long number){
   Printf("%s: %d.%d\n", message, (int) (number / 10000), (int) (number % 10000));
 }
 
+void initServos(void){
+
+  left = InitializeServoMotor(PIN_E4, false);
+  right = InitializeServoMotor(PIN_E5, true);
+
+}
+
 // Timestamp info and Diagnostics
 int iteration = 0;
 int time_faults_cumulative = 0;
+float distances[10];
+int times[10];
 
 
 
@@ -63,8 +78,8 @@ void pulsePin(void){
 
   // Output array for each loop.
   // Arranged CCW, with sensor 0 on the right and sensor 10 on the left.
-  float distances[10];
-  int times[10];
+  //float distances[10];
+  //int times[10];
   
   // Pass through loop for every trigger pair
   for(int i=0; i<5; i++) {
@@ -97,8 +112,21 @@ void pulsePin(void){
 
       // End condition
       if( time_remaining <= 0) {
-      	Printf("Timeout\n");
+      	//Printf("Timeout\n");
+      	if(end_time_1 == 0)
+      	{
+      		end_time_1 = start_time_1 + timeout_us;
+      	}
+      	if(end_time_2 == 0)
+      	{
+      		end_time_2 = start_time_2 + timeout_us;
+      	}
 	break;
+      }
+
+      if( end_time_1 != 0 && end_time_2 != 0) {
+      	Printf("Both pings received\n");
+      	break;
       }
 
       // Defense against time travelling GetTimeUS()
@@ -110,34 +138,37 @@ void pulsePin(void){
       }
       time_remaining_previous = time_remaining;
 
-      // Record the pulse start and end times.
-      Printf("echoes:%d|%d", GetPin(echo_1),GetPin(echo_2));
 
       if (GetPin(echo_1) == true && start_time_1 == 0) {
 	start_time_1 = (long) GetTimeUS();
-	Printf("Triggered1on\n");
+	//Printf("Triggered1on\n");
+	//GhettoPrintf("Start time 1: ", start_time_1);
       }
       if (GetPin(echo_2) == true && start_time_2 == 0) {
 	start_time_2 = (long) GetTimeUS();
-	Printf("Triggered2on\n");
+	//Printf("Triggered2on\n");
       }
       if (GetPin(echo_1) == false && start_time_1 != 0 && end_time_1 == 0) {
+      	//Printf("Trig1 off\n");
 	end_time_1 = (long) GetTimeUS();
       }
       if (GetPin(echo_2) == false && start_time_2 != 0 && end_time_2 == 0) {
 	end_time_2 = (long) GetTimeUS();
+				//Printf("Trig2 off\n");
       }   
     }
 
     // Compute pulse width
     // (int) is used since max pulse length is ~22000us
-    int time_1 = (int) (end_time_1 - start_time_1);
-    int time_2 = (int) (end_time_2 - start_time_2);
+    //GhettoPrintf("end_time_1", end_time_1);
+    //GhettoPrintf("start_time_1", start_time_1);
+    long time_1 = end_time_1 - start_time_1;
+    long time_2 = end_time_2 - start_time_2;
 
     // Compute distance
     // t = 2d/v => d = tv/2 = 34000*t(us)/(1000000*2) = 0.0017t(us) cm
-    float distance_1 = (float) time_1 * 0.0017;
-    float distance_2 = (float) time_2 * 0.0017;
+    float distance_1 = (float) time_1 * 0.017;
+    float distance_2 = (float) time_2 * 0.017;
 
     // Save Information
     // The trigger pair consists of two sensors 90 degrees from each other
@@ -162,16 +193,18 @@ void pulsePin(void){
   
   // Print out info
   Printf("Iteration: %d\n",iteration);
-  Printf("Cumulative time faults: %d\n", time_faults_cumulative);
+  //Printf("Cumulative time faults: %d\n", time_faults_cumulative);
   GhettoPrintf("Execution time (us)",execution_time);
-  Printf("Time faults: %d\n",time_faults);
+  //Printf("Time faults: %d\n",time_faults);
   time_faults_cumulative += time_faults;
 
   
-  for(int i=0;i < 10; i++) {
+  /*for(int i=0;i < 10; i++) {
     Printf("Distance %d: %f cm\n",i,distances[i]);
-    Printf("Time %d: %d us\n",i,times[i]);
-  }
+    //Printf("Time %d: %d.%d us\n",i,(int) (times[i] / 10000),(int) (times[i] % 10000));
+  }*/
+  Printf("Distance 9: %f cm\n",distances[8]);
+
   Printf("\n");
   
   
@@ -188,11 +221,34 @@ int main(void){
   
   Printf("Hello World\n\n");
   InitializeGPIO();
+  initServos();
   //CallEveryUS(pulsePin, 0, 60000);
   //CallEvery(pulsePin, 0, 2);
+  //SetMotor(left, -0.7);
+  //SetMotor(right, 0.7);
   while(true) {
   	pulsePin();
-  	ROM_SysCtlDelay(ROM_SysCtlClockGet());
+  	//SetMotor(left, -1.0);
+  	//SetMotor(right, -1.0);
+  	if(distances[8] < 8.0)
+  	{
+  		SetMotor(left, 0.5);
+  		SetMotor(right, 0.1);
+  		Printf("Turn right!\n");
+  	}
+  	else if(distances[8] < 9.0)
+  	{
+  		SetMotor(left, 0.3);
+  		SetMotor(right, 0.3);
+  		Printf("Full speed ahead!\n");
+  	}
+  	else
+  	{
+  		SetMotor(left, 0.1);
+  		SetMotor(right, 0.5);
+  		Printf("Turn left!\n");
+  	}
+  	ROM_SysCtlDelay(ROM_SysCtlClockGet()/15);
   }
 
   return 0;
