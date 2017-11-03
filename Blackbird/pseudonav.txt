@@ -1,0 +1,31 @@
+Pseudocode for navigation algorithm
+
+WLOG, assume we're going CCW.
+
+
+coordinates are stored in cartesian, relative to the robot (at 0,0). Points are initially aquired in polars
+
+def cartesian (r,theta):
+    table: {0,20,40,60,80,100,120,140,160,180}
+    sin:   {0, 0.34202014332, 0.64278760968, 0.86602540378, 0.98480775301, 0.98480775301, 0.86602540378, 0.64278760968, 0.34202014332, 0}
+    cos:   {1, 0.93969262078, 0.76604444311, 0.5, 0.17364817766, -0.17364817766, -0.5, -0.76604444311, -0.93969262078, -1}
+
+    return r(sin[theta/20],cos[theta/20])
+
+
+points is a struct containing points.x and points.y, each with 10 points
+
+def find_disconnects (*points)
+    assign point 9 to the wall.
+
+    obstacle number = 0
+    
+    starting on point n=8, while n > 0:
+    	 if  angle (n+1)(n)(n-1) > 90 degrees, assign to wall
+	    - use compare_with_90 function
+	 else (< 90 degrees), create new obstacle
+	      obstacle number += 1
+	 n -= 1
+
+
+def compare_with_90
