@@ -19,13 +19,89 @@ def find_disconnects (*points)
     assign point 9 to the wall.
 
     obstacle number = 0
+    int * obstaclestate[]
+    // obstacle -1 = infty
+    // 0 = wall
+    // 1,2,... = blocks
     
     starting on point n=8, while n > 0:
-    	 if  angle (n+1)(n)(n-1) > 90 degrees, assign to wall
-	    - use compare_with_90 function
-	 else (< 90 degrees), create new obstacle
+    	 // if the robot sees infinity, create a new obstacle
+    	 if distance = infty (error code 17000)
+	      obstaclestate[n] = -1
 	      obstacle number += 1
-	 n -= 1
+
+	 // if we see a concave 90 degrees
+    	 else if  angle (n+1)(n)(n-1) < 90 degrees and r_n < min(n+1,n-1)
+	      obstacle number += 1
+	      obstaclestate[n] = obstacle number
+	      - use compare_with_90 function
+
+	 // if two blocks are next to each other at a concave angle
+	 else if obstacle # > 0 and angle (n-2)(n-1)(n) is concave
+	      obstacle number += 1
+	      obstaclestate[n] = obstacle number
+
+	 // if one block is more than 4 inches away from the previous
+	 else if obstacle # > 0
+	      X = first element of the current obstacle
+	      if d(X, current element) > 4
+	      	 obstacle number += 1;
+		 obstaclestate[n] = obstacle number
+	      
+	 // if we neither see infinity or a convex 90 degrees
+	 else
+	      obstaclestate[n] = obstacle number
+
+	      
+    return obstacles
+    // obstacles is a list o
 
 
-def compare_with_90
+def compare_with_90 (*points)
+
+    for points A, B, C: (tests <ABC)
+    	compute ||A-B||^2 + ||B-C||^2 = (A_x-B_x)^2 + (A_y-B_y)^2
+			    	      + (B_x-C_x)^2 + (B_y-C_y)^2
+	compute ||C-A||^2 = (C_x-A_x)^2 + (C_y-A_y)^2
+
+	if ||A-B||^2 + ||B-C||^2 > ||C-A||^2
+	   return less than 90 degrees
+
+	else
+	   return greater than 90 degrees
+
+
+def choose path
+    draw B_p(4) around the 'average' point  of each obstacle
+    if the gap between two adjacent obstacles (or the left wall) is greater than 12":
+       find the midpoint of the gap
+       set target as the midpoint
+
+
+def pid control
+    
+    proportion = angle between target vector and current heading (90 degrees)
+    integral is covered by the vector recalculation.
+    derivative:
+	store past values of the correction value
+	compute the derivative between each set of elements
+	smooth out the derivative through an exponential distribution
+	       derivative = (1/2)d_0 + (1/4)d_{-1} + (1/8)d_{-2} + (1/16)d_{-4} + ... (cut out at a certain point)
+
+    // tune k_t, k_p and k_d with a fuck ton of trial and error
+    correction = execution_time * k_t(k_p*proportion + k_d*derivative) + previous_correction
+
+    // correction is a float between 0 and 1
+    return correction
+
+
+def check for ramp
+    mount a hardware switch on the front of the robot to check for angles at the minimum specified ramp angle
+
+    // state machine:
+    if off ramp and switch = true (and switch previous = false)
+       state = on ramp
+    else if on ramp and switch = true (and switch previous = false)
+       state = off ramp
+
+    change this to a tilt sensor if possible.
