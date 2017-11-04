@@ -18,7 +18,7 @@ tMotor *left;
 tMotor *right;
 
 tBoolean led_on;
-
+ 
 // How long should we wait for the distance sensors?
 long timeout_us = 15000;
 
@@ -41,8 +41,6 @@ void initServos(void){
 }
 
 
-
-
 int main(void){
   
   Printf("Hello World\n\n");
@@ -59,7 +57,6 @@ int main(void){
     SetPin(PIN_F1, led_on);
     SetPin(PIN_F3, !led_on);
     led_on = !led_on;
-
 
     // The actual function
     float * distances = getDistance(timeout_us,trigger_pins,echo_1,echo_2);

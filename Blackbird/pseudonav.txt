@@ -15,7 +15,7 @@ def cartesian (r,theta):
 
 points is a struct containing points.x and points.y, each with 10 points
 
-def find_disconnects (*points)
+def indexObstacles (*points)
     assign point 9 to the wall.
 
     obstacle number = 0
@@ -57,7 +57,7 @@ def find_disconnects (*points)
     // obstacles is a list o
 
 
-def compare_with_90 (*points)
+def isObtuse (*points)
 
     for points A, B, C: (tests <ABC)
     	compute ||A-B||^2 + ||B-C||^2 = (A_x-B_x)^2 + (A_y-B_y)^2
@@ -71,12 +71,12 @@ def compare_with_90 (*points)
 	   return greater than 90 degrees
 
 
-def choose path
+def chooseTarget
     draw B_p(4) around the 'average' point  of each obstacle
     if the gap between two adjacent obstacles (or the left wall) is greater than 12":
        find the midpoint of the gap
        set target as the midpoint
-
+    return target vector angle (uses an inverse tangent function)
 
 def pid control
     
@@ -95,7 +95,7 @@ def pid control
     return correction
 
 
-def check for ramp
+def checkRamp
     mount a hardware switch on the front of the robot to check for angles at the minimum specified ramp angle
 
     // state machine:

@@ -1,0 +1,6 @@
+Pseudocode for the control algorithm
+
+def setMotors (pidCoefficient, sensitivity)
+    pidCoefficient should be the correction vector
+    sensitivity should be the scale of the correction, set as a global in main.c
+    sets the motors to the appropriate speeds
