@@ -19,22 +19,23 @@ int main(void){
   // Initialize timeTracker struct
   timeTracker time;
   time.iteration = 0;
-
-  // Main function diagnostic info
-  int iteration = 0;
   
   Printf("Hello World\n\n");
   
   while(true) {
 
-    // The actual function
+    // Get ultrasonic sensor distances
     getDistance(&points,&profile,&time);
+
+    // Get line sensor reflectances
+    getLineData(&points,&profile);
     
     // Update tracker
     updateTimeTracker(&time);
     
     // Print out info
     PrintOutDistances(&points);
+    PrintOutLine(&points);
     ledColorError(&points);
 
     // Delay for 1 second

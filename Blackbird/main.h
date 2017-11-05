@@ -6,6 +6,7 @@
 #include <RASLib/inc/time.h>
 #include <RASLib/inc/uart.h>
 #include <RASLib/inc/motor.h>
+#include <RASLib/inc/linesensor.h>
 
 // Stellarisware include:
 #include <StellarisWare/driverlib/rom.h>
@@ -20,6 +21,10 @@ struct pointSet {
   float y[10];
   // distance sensor raw output
   float r[10];
+  // IR array raw output
+  float reflectances[8];
+  // IR array processed output
+  float line[8];
   // output of indexObstacles
   int obstacleIndex[10];
   // 0 = display heartBeat; 1 = display errorCode; 2 = display executionMode
@@ -39,6 +44,8 @@ struct HWProfile {
   long timeout_us;
   tMotor *left;
   tMotor *right;
+  tLineSensor *linesensor;
+  float threshhold;
 };
 
 // definition of the main diagnostic structure
@@ -52,6 +59,7 @@ struct timeTracker {
 // display.c
 void GhettoPrintf(char *message,long number);
 void PrintOutDistances(pointSet * points);
+void PrintOutLine(pointSet * points);
 void ledColorError(pointSet * points);
 void updateTimeTracker(timeTracker * tracker);
 
@@ -62,6 +70,7 @@ float * calculateDistance(long start_time_1, long end_time_1, long start_time_2,
 long getDistance(pointSet * points, HWProfile * profile, timeTracker *tracker);
 int checkRamp(); // not done
 int findFirstObstacle(pointSet * points,int n);
+void getLineData(pointSet * points,HWProfile * profile);
 
 // math.c
 void cartesian(pointSet * points); // not done

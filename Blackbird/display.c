@@ -7,16 +7,30 @@
 // Printf from uart.h doesn't support long. Here we go!
 // The number is cast to long since the fucking launchpad doesn't seem to support the division of long long int; (long long int) x / n or x % n gives make errors, but +,-,* are fine.
 void GhettoPrintf(char *message,long number){
-    Printf("%s: %d.%d\n", message, (int) (number / 10000), (int) (number % 10000));
+  Printf("%s: %d.%d\n", message, (int) (number / 10000), (int) (number % 10000));
 }
 
 
 // Print out each distance from a *array
 // 10 elements corresponding with the 10 distance sensors
 void PrintOutDistances(pointSet * points){
-    for(int i=0;i < 10; i++) {
-      Printf("Distance %d: %f cm\n",i,(points->r)[i]);
-    }
+  for(int i=0;i < 10; i++) {
+    Printf("Distance %d: %f cm\n",i,(points->r)[i]);
+  }
+}
+
+
+// Print out line sensor array
+// 8 elements corresponding with 8 infrared phototransistors
+// 1 indicates presence of a black line; 0 indicates no line
+void PrintOutLine(pointSet * points) {
+
+  char line_array_str[16];
+  for(int i=0;i < 8; i++) {
+    line_array_str[2*i] = ' ';
+    line_array_str[2*i+1] = (points->line)[i];
+  }
+  Printf("Line sensor: %s\n",line_array_str);
 }
 
 

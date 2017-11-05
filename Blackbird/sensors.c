@@ -135,6 +135,26 @@ long getDistance(pointSet * points, HWProfile * profile, timeTracker * tracker){
   // Return the total function time
   long etime = (long) GetTimeUS() - loop_start_time;
   tracker->execution_time = etime;
-  return(etime);
+  return (etime);
   
+}
+
+// Get line sensor output, and apply basic filtering
+void getLineData(pointSet * points, HWProfile * profile) {
+
+  LineSensorReadArray(profile->linesensor,points->reflectances);
+  
+  for (int i=0; i<8; i++) {
+
+    // if the sensor is more reflective than profile.threshhold
+    // assign white (0) to that sensor
+    if ((points->reflectances)[i] < profile->threshhold) {
+      (points->line)[i] = '0';
+    }
+
+    // else, assign black
+    else {
+      (points->line)[i] = '1';
+    }
+  }
 }
