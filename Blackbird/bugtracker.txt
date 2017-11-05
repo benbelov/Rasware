@@ -1,0 +1,11 @@
+Problems and How to fix them
+Document issues that might recur here
+
+Distance sensors are a bit weird, showing very high distances:
+     - check that the batteries are going through the voltage regulator
+     - inspecific, check that V_in is connected to V_in, not V_out
+	 
+Uart not working:
+     - power cycle board, then reset
+     - try a hard reset (hold down reset, power cycle release reset)
+

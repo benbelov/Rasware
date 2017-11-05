@@ -1,12 +1,7 @@
 // sensors.c in /Blackbird
 // Contains subroutines for obtaining sensor readings
 
-// Sensor related includes
-#include <RASLib/inc/common.h>
-#include <RASLib/inc/gpio.h>
-#include <RASLib/inc/time.h>
-#include <StellarisWare/driverlib/rom.h>
-
+#include "main.h"
 
 
 
@@ -44,9 +39,9 @@ float* calculateDistance(long start_time_1, long end_time_1, long start_time_2, 
   long time_2 = end_time_2 - start_time_2;
 
   // Compute distance
-  // t = 2d/v => d = tv/2 = 34000*t(us)/(1000000*2) = 0.0017t(us) cm
-  output[0] = (float) time_1 * 0.017;
-  output[1] = (float) time_2 * 0.017;
+  // t = 2d/v => d = tv/2 = 34300*t(us)/(1000000*2) = 0.01715t(us) cm
+  output[0] = (float) time_1 * 0.01715;
+  output[1] = (float) time_2 * 0.01715;
 
   return(output);
 }
@@ -54,12 +49,8 @@ float* calculateDistance(long start_time_1, long end_time_1, long start_time_2, 
 
 // The most interesting hardware-related function
 // Pings each distance sensor pair in sequence, and computes each distance
-float * getDistance(long timeout_us,tPin * trigger_pins,tPin echo_1, tPin echo_2){
+void getDistance(pointSet * points, long timeout_us,tPin * trigger_pins,tPin echo_1, tPin echo_2){
   
-
-  // Output array for each loop.
-  // Arranged CCW, with sensor 0 on the right and sensor 10 on the left.
-  static float distances[10];
   
   // Pass through loop for every trigger pair
   for(int i=0; i<5; i++) {
@@ -70,7 +61,7 @@ float * getDistance(long timeout_us,tPin * trigger_pins,tPin echo_1, tPin echo_2
     long end_time_1 = 0;
     long end_time_2 = 0;
     long timeout_time = (long) GetTimeUS() + timeout_us;
-  
+
     // Pulse pin by 15us
     PulsePin(trigger_pins[i]);
     
@@ -84,7 +75,7 @@ float * getDistance(long timeout_us,tPin * trigger_pins,tPin echo_1, tPin echo_2
       // End condition: timeout (error states)
       if( time_remaining <= 0) {
 	
-	// Error state: no ping received (too close)
+	// Error state: device disconnected
 	// Error = -17000
 	if(start_time_1 == 0) {
 	  start_time_1 = 1000000;
@@ -129,15 +120,13 @@ float * getDistance(long timeout_us,tPin * trigger_pins,tPin echo_1, tPin echo_2
 	start_time_2 = (long) GetTimeUS();
       }
     }
-
     float *  distance_pair = calculateDistance(start_time_1, end_time_1, start_time_2, end_time_2);
 
     // Save Information
+    // Information is saved to a pointSet struct
     // The trigger pair consists of two sensors 90 degrees from each other
-    distances[i] = distance_pair[0];
-    distances[i+5] = distance_pair[1];
+    (points->r)[i] = distance_pair[0];
+    (points->r)[i+5] = distance_pair[1];
 
   }
-  // Returns
-  return distances;
 }

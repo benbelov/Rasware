@@ -1,9 +1,7 @@
 // display.c in /Blackbird
 // File containing I/O, debugging, and diagnostic subroutines
 
-// Raslib I/O related includes:
-#include <RASLib/inc/common.h>
-#include <RASLib/inc/uart.h>
+#include "main.h"
 
 
 // Printf from uart.h doesn't support long. Here we go!
@@ -15,9 +13,16 @@ void GhettoPrintf(char *message,long number){
 
 // Print out each distance from a *array
 // 10 elements corresponding with the 10 distance sensors
-void PrintOutDistances(float *distances){
+void PrintOutDistances(pointSet * points){
     for(int i=0;i < 10; i++) {
-      Printf("Distance %d: %f cm\n",i,*(distances+i));
+      Printf("Distance %d: %f cm\n",i,(points->r)[i]);
     }
 }
 
+
+// Make the LED display an error color code
+// Will flash a different color every cycle:
+// Green = normal operation
+// Blue = disconnected distance sensor
+void ledColorError(pointSet * points) {
+}

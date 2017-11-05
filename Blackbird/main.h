@@ -1,9 +1,14 @@
+#include <stdlib.h>
+
 // Raslib includes:
 #include <RASLib/inc/common.h>
 #include <RASLib/inc/gpio.h>
 #include <RASLib/inc/time.h>
 #include <RASLib/inc/uart.h>
 #include <RASLib/inc/motor.h>
+
+// Stellarisware include:
+#include <StellarisWare/driverlib/rom.h>
 
 
 // definition of the pointSet structure
@@ -18,13 +23,14 @@ struct pointSet {
    
 // display.c
 void GhettoPrintf(char *message,long number);
-void PrintOutDistances(float *distances);
+void PrintOutDistances(pointSet * points);
+void ledColorError(pointSet * points);
 
 // sensors.c
 void LoopDelay(float time);
 void PulsePin(tPin pin);
 float * calculateDistance(long start_time_1, long end_time_1, long start_time_2, long end_time_2);
-float * getDistance(long timeout_us,tPin * trigger_pins,tPin echo_1, tPin echo_2);
+void getDistance(pointSet * points, long timeout_us,tPin * trigger_pins,tPin echo_1, tPin echo_2);
 int checkRamp(); // not done
 int findFirstObstacle(pointSet * points,int n);
 

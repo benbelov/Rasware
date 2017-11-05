@@ -35,24 +35,30 @@ void initServos(void){
 
 
 int main(void){
+
+  pointSet points;
   
   Printf("Hello World\n\n");
   
   InitializeGPIO();
   initServos();
-
+  
   while(true) {
 
+    // Pointset
+    Printf("test2\n");
+
+  
     // Diagnostic info
     long loop_start_time = (long) GetTimeUS();
-
+    
     // Heartbeat LED
     SetPin(PIN_F1, led_on);
     SetPin(PIN_F3, !led_on);
     led_on = !led_on;
 
     // The actual function
-    float * distances = getDistance(timeout_us,trigger_pins,echo_1,echo_2);
+    getDistance(&points,timeout_us,trigger_pins,echo_1,echo_2);
 
     // Time computation
     long execution_time = (long) GetTimeUS() - loop_start_time;
@@ -64,9 +70,10 @@ int main(void){
     Printf("Iteration: %d\n",iteration);
     GhettoPrintf("Execution time (us)",execution_time);
 
-    PrintOutDistances(distances);
+    PrintOutDistances(&points);
     
     LoopDelay(1);
+    
   }
   return 0;
 }
