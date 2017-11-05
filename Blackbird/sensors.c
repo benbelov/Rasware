@@ -49,7 +49,7 @@ float* calculateDistance(long start_time_1, long end_time_1, long start_time_2, 
 
 // The most interesting hardware-related function
 // Pings each distance sensor pair in sequence, and computes each distance
-void getDistance(pointSet * points, long timeout_us,tPin * trigger_pins,tPin echo_1, tPin echo_2){
+void getDistance(pointSet * points, HWProfile * profile){
   
   
   // Pass through loop for every trigger pair
@@ -60,10 +60,10 @@ void getDistance(pointSet * points, long timeout_us,tPin * trigger_pins,tPin ech
     long start_time_2 = 0;
     long end_time_1 = 0;
     long end_time_2 = 0;
-    long timeout_time = (long) GetTimeUS() + timeout_us;
+    long timeout_time = (long) GetTimeUS() + profile->timeout_us;
 
     // Pulse pin by 15us
-    PulsePin(trigger_pins[i]);
+    PulsePin((profile->trigger_pins)[i]);
     
     // Sensor loop
     // while (true) is used with break to minimize the chance of launchpad fuckery
@@ -86,7 +86,7 @@ void getDistance(pointSet * points, long timeout_us,tPin * trigger_pins,tPin ech
 	// Error = 17000
       	else if(end_time_1 == 0)
       	{
-      		end_time_1 = start_time_1 + timeout_us;
+      		end_time_1 = start_time_1 + profile->timeout_us;
       	}
 	
 	// Same for time 2
@@ -96,7 +96,7 @@ void getDistance(pointSet * points, long timeout_us,tPin * trigger_pins,tPin ech
 	}
       	else if(end_time_2 == 0)
       	{
-      		end_time_2 = start_time_2 + timeout_us;
+      		end_time_2 = start_time_2 + profile->timeout_us;
       	}
 	break;
       }
@@ -107,16 +107,16 @@ void getDistance(pointSet * points, long timeout_us,tPin * trigger_pins,tPin ech
 
 
       // Sets start times and end times when appropriate
-      if (GetPin(echo_1) == false && start_time_1 != 0 && end_time_1 == 0) {
+      if (GetPin(profile->echo_1) == false && start_time_1 != 0 && end_time_1 == 0) {
 	end_time_1 = (long) GetTimeUS();
       }
-      if (GetPin(echo_2) == false && start_time_2 != 0 && end_time_2 == 0) {
+      if (GetPin(profile->echo_2) == false && start_time_2 != 0 && end_time_2 == 0) {
 	end_time_2 = (long) GetTimeUS();
       }   
-      if (GetPin(echo_1) == true && start_time_1 == 0) {
+      if (GetPin(profile->echo_1) == true && start_time_1 == 0) {
 	start_time_1 = (long) GetTimeUS();
       }
-      if (GetPin(echo_2) == true && start_time_2 == 0) {
+      if (GetPin(profile->echo_2) == true && start_time_2 == 0) {
 	start_time_2 = (long) GetTimeUS();
       }
     }

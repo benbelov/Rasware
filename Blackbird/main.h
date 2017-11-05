@@ -28,6 +28,18 @@ struct pointSet {
   int errorCode;
   int executionMode;
 };
+
+// definition of the hardware profile structure
+// stores all information about hardware settings
+typedef struct HWProfile HWProfile;
+struct HWProfile {
+  tPin trigger_pins[5];
+  tPin echo_1;
+  tPin echo_2;
+  long timeout_us;
+  tMotor *left;
+  tMotor *right;
+};
    
 // display.c
 void GhettoPrintf(char *message,long number);
@@ -38,7 +50,7 @@ void ledColorError(pointSet * points);
 void LoopDelay(float time);
 void PulsePin(tPin pin);
 float * calculateDistance(long start_time_1, long end_time_1, long start_time_2, long end_time_2);
-void getDistance(pointSet * points, long timeout_us,tPin * trigger_pins,tPin echo_1, tPin echo_2);
+void getDistance(pointSet * points, HWProfile * profile);
 int checkRamp(); // not done
 int findFirstObstacle(pointSet * points,int n);
 
@@ -55,3 +67,6 @@ float pidControl(float target, float * targetHistory); // not done
 
 // control.c
 void setMotors(float pidCoefficient,float sensitivity); // not done
+
+// hardware.c
+void initHardware(HWProfile * profile);
