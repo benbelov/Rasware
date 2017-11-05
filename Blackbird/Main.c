@@ -37,6 +37,7 @@ void initServos(void){
 int main(void){
 
   pointSet points;
+  points.currentStatusCode = 0;
   
   Printf("Hello World\n\n");
   
@@ -45,17 +46,10 @@ int main(void){
   
   while(true) {
 
-    // Pointset
-    Printf("test2\n");
-
   
     // Diagnostic info
     long loop_start_time = (long) GetTimeUS();
     
-    // Heartbeat LED
-    SetPin(PIN_F1, led_on);
-    SetPin(PIN_F3, !led_on);
-    led_on = !led_on;
 
     // The actual function
     getDistance(&points,timeout_us,trigger_pins,echo_1,echo_2);
@@ -71,6 +65,8 @@ int main(void){
     GhettoPrintf("Execution time (us)",execution_time);
 
     PrintOutDistances(&points);
+
+    ledColorError(&points);
     
     LoopDelay(1);
     

@@ -2,6 +2,19 @@ Problems and How to fix them
 Document issues that might recur here
 
 
+LED Debug Codes:
+    - speed of flash indicates cycle time
+    - mod 0: (always green) will always be on as a heartbeat
+    - mod 1: lower number will take precedence to higher number, except 0
+      - 10 = no errors; off
+      - 1 = distance sensor disconnected; red
+      - 2 = distance sensor timeout; purple
+      - 3 = distance sensor too close; blue
+      - X = unknown error code; white
+    - mod 2:
+      - 0 = output in UART mode; orange
+      - 1 = output in PySerial mode; yellow  // not yet implemented
+
 Functions such as malloc, sprintf, printf cause make errors:
      - malloc, sprintf, and printf use heap memory, which isn't available on the launchpad
      - declare variables in main, and pass &variables to functions instead.

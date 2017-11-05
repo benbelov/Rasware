@@ -121,12 +121,11 @@ void getDistance(pointSet * points, long timeout_us,tPin * trigger_pins,tPin ech
       }
     }
     float *  distance_pair = calculateDistance(start_time_1, end_time_1, start_time_2, end_time_2);
-
+    
     // Save Information
     // Information is saved to a pointSet struct
     // The trigger pair consists of two sensors 90 degrees from each other
     (points->r)[i] = distance_pair[0];
-    (points->r)[i+5] = distance_pair[1];
-
+    (points->r)[i+5] = distance_pair[1];    
   }
 }

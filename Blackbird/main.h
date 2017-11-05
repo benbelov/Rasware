@@ -15,10 +15,18 @@
 // stores sets of points and distances
 typedef struct pointSet pointSet;
 struct pointSet {
+  // x,y coordinates, computed from r
   float x[10];
   float y[10];
+  // distance sensor raw output
   float r[10];
+  // output of indexObstacles
   int obstacleIndex[10];
+  // 0 = display heartBeat; 1 = display errorCode; 2 = display executionMode
+  int currentStatusCode;
+  int heartBeat;
+  int errorCode;
+  int executionMode;
 };
    
 // display.c
