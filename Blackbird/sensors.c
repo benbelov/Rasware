@@ -49,8 +49,11 @@ float* calculateDistance(long start_time_1, long end_time_1, long start_time_2, 
 
 // The most interesting hardware-related function
 // Pings each distance sensor pair in sequence, and computes each distance
-void getDistance(pointSet * points, HWProfile * profile){
-  
+// Returns the execution time
+long getDistance(pointSet * points, HWProfile * profile, timeTracker * tracker){
+
+  // Will be used at the end to get the loop time
+  long loop_start_time = (long) GetTimeUS();
   
   // Pass through loop for every trigger pair
   for(int i=0; i<5; i++) {
@@ -128,4 +131,10 @@ void getDistance(pointSet * points, HWProfile * profile){
     (points->r)[i] = distance_pair[0];
     (points->r)[i+5] = distance_pair[1];    
   }
+
+  // Return the total function time
+  long etime = (long) GetTimeUS() - loop_start_time;
+  tracker->execution_time = etime;
+  return(etime);
+  
 }

@@ -40,17 +40,26 @@ struct HWProfile {
   tMotor *left;
   tMotor *right;
 };
+
+// definition of the main diagnostic structure
+// stores time-related information
+typedef struct timeTracker timeTracker;
+struct timeTracker {
+  int iteration;
+  long execution_time;
+};
    
 // display.c
 void GhettoPrintf(char *message,long number);
 void PrintOutDistances(pointSet * points);
 void ledColorError(pointSet * points);
+void updateTimeTracker(timeTracker * tracker);
 
 // sensors.c
 void LoopDelay(float time);
 void PulsePin(tPin pin);
 float * calculateDistance(long start_time_1, long end_time_1, long start_time_2, long end_time_2);
-void getDistance(pointSet * points, HWProfile * profile);
+long getDistance(pointSet * points, HWProfile * profile, timeTracker *tracker);
 int checkRamp(); // not done
 int findFirstObstacle(pointSet * points,int n);
 

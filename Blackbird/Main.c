@@ -2,12 +2,8 @@
 // Goes ultrasonic
 // Navigates around blocks
 
-
 // All subroutines are in other files
 #include "main.h"
-
-// Global diagnostic info
-int iteration = 0;
 
 int main(void){
 
@@ -19,36 +15,31 @@ int main(void){
   // and set up motors and GPIO
   HWProfile profile;
   initHardware(&profile);
-  
+
+  // Initialize timeTracker struct
+  timeTracker time;
+  time.iteration = 0;
+
+  // Main function diagnostic info
+  int iteration = 0;
   
   Printf("Hello World\n\n");
   
   while(true) {
 
-  
-    // Diagnostic info
-    long loop_start_time = (long) GetTimeUS();
-    
-
     // The actual function
-    getDistance(&points,&profile);
-
-    // Time computation
-    long execution_time = (long) GetTimeUS() - loop_start_time;
+    getDistance(&points,&profile,&time);
     
-    // Timestamp update
-    iteration += 1;    
-  
+    // Update tracker
+    updateTimeTracker(&time);
+    
     // Print out info
-    Printf("Iteration: %d\n",iteration);
-    GhettoPrintf("Execution time (us)",execution_time);
-
     PrintOutDistances(&points);
-
     ledColorError(&points);
-    
+
+    // Delay for 1 second
     LoopDelay(1);
-    
   }
+  
   return 0;
 }

@@ -20,6 +20,13 @@ void PrintOutDistances(pointSet * points){
 }
 
 
+// Updates the timeTracker
+void updateTimeTracker(timeTracker * tracker) {
+  tracker->iteration += 1;
+  Printf("Iteration: %d\n",tracker->iteration);
+  GhettoPrintf("Execution time (us)",tracker->execution_time);
+}
+
 // Make the LED display an error color code
 // Will flash a different color every cycle:
 // Green = normal operation
