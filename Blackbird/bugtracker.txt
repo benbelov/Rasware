@@ -1,6 +1,12 @@
 Problems and How to fix them
 Document issues that might recur here
 
+
+Functions such as malloc, sprintf, printf cause make errors:
+     - malloc, sprintf, and printf use heap memory, which isn't available on the launchpad
+     - declare variables in main, and pass &variables to functions instead.
+     - https://eehusky.wordpress.com/2012/12/17/using-gcc-with-the-ti-stellaris-launchpad-newlib/
+
 Distance sensors are a bit weird, showing very high distances:
      - check that the batteries are going through the voltage regulator
      - inspecific, check that V_in is connected to V_in, not V_out
