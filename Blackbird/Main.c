@@ -29,6 +29,9 @@ int main(void){
 
     // Get line sensor reflectances
     getLineData(&points,&profile);
+
+    // Computations
+    indexObstacles(&points);
     
     // Update tracker
     updateTimeTracker(&time);
@@ -39,7 +42,7 @@ int main(void){
     ledColorError(&points);
 
     // Delay for 1 second
-    LoopDelay(1);
+    LoopDelay(3);
   }
   
   return 0;

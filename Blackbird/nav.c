@@ -24,15 +24,18 @@ void indexObstacles (pointSet * points) {
 
   int obstacleNumber = 0;
 
+  points->obstacleIndex[9] = 0;
+  
   for (int n=8; n>0; n--) {
 
     // if we're still reading the wall:
     if (obstacleNumber == 0) {
       
       // n_r = 17000 (timeout)
-      if ((points->r)[n] = 17000) {
+      if ((points->r)[n] >= 100) {
 	obstacleNumber += 1;
 	(points->obstacleIndex)[n] = -1;
+	Printf("timeout\n");
       }
 
       // the wall can't form an acute angle relative to the robot
@@ -42,11 +45,13 @@ void indexObstacles (pointSet * points) {
 			(points->x)[n+1],(points->y)[n+1]) == 0) {
 	obstacleNumber += 1;
 	(points->obstacleIndex)[n] = 0;
+	Printf("acute angle\n");
       }
 
       // otherwise, the wall must just be continuing.
       else {
         (points->obstacleIndex)[n] = 0;
+	Printf("continue wall\n");
       }
     }
     
@@ -54,9 +59,10 @@ void indexObstacles (pointSet * points) {
     else {
       
       // timeout obviously indicates a gap between obstacles
-      if ((points->r)[n] = 17000) {
+      if ((points->r)[n] >= 100) {
 	obstacleNumber += 1;
 	(points->obstacleIndex)[n] = -1;
+	Printf("obstacle gap\n");
       }
 
       // if two blocks are next to each other,
@@ -66,6 +72,7 @@ void indexObstacles (pointSet * points) {
 			(points->x)[n+1],(points->y)[n+1])) {
 	obstacleNumber += 1;
 	(points->obstacleIndex)[n] = obstacleNumber;
+	Printf("points far away\n");
       }
 
       // if two blocks are next each other,
@@ -81,10 +88,12 @@ void indexObstacles (pointSet * points) {
 	      > 4) {
 	obstacleNumber += 1;
 	(points->obstacleIndex)[n] = obstacleNumber;
+	Printf("concave blocks\n");
       }
 
       else {
 	(points->obstacleIndex)[n] = obstacleNumber;
+	Printf("same block");
       }      
     }
   }

@@ -12,8 +12,8 @@ LED Debug Codes:
       - 3 = distance sensor too close; blue
       - X = unknown error code; white
     - mod 2:
-      - 0 = output in UART mode; orange
-      - 1 = output in PySerial mode; yellow  // not yet implemented
+      - 0 = output in UART mode; yellow
+      - 1 = output in PySerial mode; ????  // not yet implemented
 
 Functions such as malloc, sprintf, printf cause make errors:
      - malloc, sprintf, and printf use heap memory, which isn't available on the launchpad
@@ -23,7 +23,7 @@ Functions such as malloc, sprintf, printf cause make errors:
 Distance sensors are a bit weird, showing very high distances:
      - check that the batteries are going through the voltage regulator
      - inspecific, check that V_in is connected to V_in, not V_out
-	 
+ 	 
 Uart not working:
      - power cycle board, then reset
      - try a hard reset (hold down reset, power cycle release reset)

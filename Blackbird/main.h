@@ -73,7 +73,7 @@ int findFirstObstacle(pointSet * points,int n);
 void getLineData(pointSet * points,HWProfile * profile);
 
 // math.c
-void cartesian(pointSet * points); // not done
+void cartesian(pointSet * points);
 int isObtuse(float a_x,float a_y,float b_x,float b_y,float c_x,float c_y);
 float fastInverseTangent(float x);
 int isConvex(float a_x,float a_y,float b_x,float b_y,float c_x,float c_y);
@@ -82,6 +82,7 @@ int isConvex(float a_x,float a_y,float b_x,float b_y,float c_x,float c_y);
 void indexObstacles(pointSet * points);
 float chooseTarget(pointSet * points); // not done
 float pidControl(float target, float * targetHistory); // not done
+float IRpidControl(); // not done
 
 // control.c
 void setMotors(float pidCoefficient,float sensitivity); // not done

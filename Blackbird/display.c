@@ -16,6 +16,7 @@ void GhettoPrintf(char *message,long number){
 void PrintOutDistances(pointSet * points){
   for(int i=0;i < 10; i++) {
     Printf("Distance %d: %f cm\n",i,(points->r)[i]);
+    Printf("Obstacle number: %d\n",(points->obstacleIndex)[i]);
   }
 }
 

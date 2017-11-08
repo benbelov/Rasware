@@ -7,6 +7,8 @@
 // initializes hardware profile and sets values
 void initHardware(HWProfile * profile) {
 
+  InitializeUART(9600);
+  
   // Initialize GPIO
   InitializeGPIO();
   
