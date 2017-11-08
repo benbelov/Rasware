@@ -24,7 +24,7 @@ int main(void){
   Printf("Hello World\n\n");
 
   // Initialize python listener
-  void initializeRasPy();
+  initializeRasPy();
   
   while(true) {
 
@@ -47,7 +47,7 @@ int main(void){
     ledColorError(&points);
 
     // Delay for 1 second
-    LoopDelay(1);
+    LoopDelay(0.1);
   }
   
   return 0;

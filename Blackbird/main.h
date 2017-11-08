@@ -62,10 +62,20 @@ void PrintOutDistances(pointSet * points);
 void PrintOutLine(pointSet * points);
 void ledColorError(pointSet * points);
 void updateTimeTracker(timeTracker * tracker);
-void printToPySerial(pointSet * points,HWProfile * profile,timeTracker * time);
 void printTimeTracker(timeTracker * tracker);
 void printOutInfo(pointSet * points, HWProfile * profile, timeTracker * time);
+
+// raspy.c
+void printToPySerial(pointSet * points,HWProfile * profile,timeTracker * time);
 void initializeRasPy();
+void definecolor(char * color, int r, int g, int b);
+void setscale(float scale);
+void drawline(float x_1,float y_1,float x_2,float y_2,char * color);
+void setoffset(int x, int y);
+void text(float x, float y, int label);
+void clrscrn();
+void startraspy();
+
 
 // sensors.c
 void LoopDelay(float time);

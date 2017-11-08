@@ -2,7 +2,7 @@
 # Available functions:
 #      'definecolor:str color,int r,int g,int b\n'
 #             built in: black = 0,0,0; white = 255,255,255
-#      'setscale:int scale\n'
+#      'setscale:float scale\n'
 #      'setoffset:int x,int y\n'
 #      'drawline:float x_1,float y_1,float x_2,float y_2,str color\n'
 #      'drawcircle:float x,float y,float r,str color\n'
@@ -57,26 +57,27 @@ class tm4c_launchpad:
             self.text()
         elif(self.current_line[0:7] == "clrscrn"):
             self.clrscrn()
-        else:
+        elif(self.current_line != ""):
             self.unknown_cmd()
             
     # if the 'definecolor' command is called:
     def color_update(self):
 
         color_name_end = self.current_line.find(",")
-        r_end = self.current_line.find(",",color_name_end)
+        r_end = self.current_line.find(",",color_name_end+1)
         g_end = self.current_line.find(",",r_end+1)
         b_end = len(self.current_line)
         color_name = self.current_line[12:color_name_end]
-        r_val = int(self.current_line[color_name_end+1:r_end])
-        g_val = int(self.current_line[r_end+1:g_end])
-        b_val = int(self.current_line[g_end+1:b_end])
+                
+        r_val = float(self.current_line[color_name_end+1:r_end])
+        g_val = float(self.current_line[r_end+1:g_end])
+        b_val = float(self.current_line[g_end+1:b_end])
         self.colors[color_name] = (r_val,g_val,b_val)
             
     # if the 'setscale' command is called:
     def scale_update(self):
         scale_end = len(self.current_line)
-        self.scale = int(self.current_line[9:scale_end])
+        self.scale = float(self.current_line[9:scale_end])
 
     # if the 'setoffset' command is called:
     def set_offset(self):
@@ -102,8 +103,13 @@ class tm4c_launchpad:
               self.scale*float(self.current_line[y1_end+1:x2_end]))
         y2 = (self.y_offset +
               self.scale*float(self.current_line[x2_end+1:y2_end]))
-        color = self.colors[self.current_line[y2_end+1:color_end]]
 
+        try:
+            color = self.colors[self.current_line[y2_end+1:color_end]]
+
+        except:
+            color = (0,0,0)
+            
         set_colour(Colour(color[0],color[1],color[2]))
         line(x1,y1,x2,y2)
 
@@ -133,9 +139,12 @@ class tm4c_launchpad:
 launchpad = tm4c_launchpad('/dev/lm4f')
 
 # wait for the beginning of the cycle
-while(launchpad.current_line != "clrscrn"):
+while(1):
     launchpad.get_line()
-
+    print(launchpad.current_line)
+    if (launchpad.current_line == "start"):
+        break
+    
 while(1):
     launchpad.get_line()
     launchpad.process_line()

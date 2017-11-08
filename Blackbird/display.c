@@ -129,31 +129,6 @@ void ledColorError(pointSet * points) {
   }
 }
 
-
-void initializeRasPy() {
-  Printf("clrscrn\n");
-  Printf("setscale = 5");
-}
-
-// Prints out information in a machine readable format
-// Intended to pipe info to PySerial
-// Format: struct:var,var... \n struct:var,var; ... \n ...
-void printToPySerial(pointSet * points,HWProfile * profile,timeTracker * time) {
-
-  Printf("clrscrn\n");
-  for (int i=0; i<10; i++) {
-    Printf("drawline:0,0,%f,%f,black\n",
-	   points->x[i],
-	   points->y[i]);
-    Printf("text:%f,%f,%d\n",
-	   points->x[i],
-	   points->y[i],
-	   points->obstacleIndex[i]);
-  }
-
-}
-  
-
 // Prints out info
 // if profile->mode = python-mode, print out to pyserial
 // if profile->mode = uart-mode, print out in a human-readable form
