@@ -10,6 +10,7 @@ int main(void){
   // Initialize pointSet struct for storing nav data
   pointSet points;
   points.currentStatusCode = 0;
+  points.executionMode = 1;
 
   // Initializ HWProfile struct for storing hardware info
   // and set up motors and GPIO
@@ -21,6 +22,9 @@ int main(void){
   time.iteration = 0;
   
   Printf("Hello World\n\n");
+
+  // Initialize python listener
+  void initializeRasPy();
   
   while(true) {
 
@@ -31,18 +35,19 @@ int main(void){
     getLineData(&points,&profile);
 
     // Computations
+    cartesian(&points);
     indexObstacles(&points);
-    
+
     // Update tracker
     updateTimeTracker(&time);
     
     // Print out info
-    PrintOutDistances(&points);
-    PrintOutLine(&points);
+    printOutInfo(&points,&profile,&time);
+
     ledColorError(&points);
 
     // Delay for 1 second
-    LoopDelay(3);
+    LoopDelay(1);
   }
   
   return 0;

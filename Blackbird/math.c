@@ -42,13 +42,14 @@ int isConvex(float a_x,float a_y,float b_x,float b_y,float c_x,float c_y) {
 
   if (bLineValue < b_y) {
     return(1);
+
   }
   else {
     return(0);
   }
+
   
 }
-
 
 // fast inverse tangent; works very well for (-1,1);
 // if the heading is mostly forward, use dx/dy; if the heading is far from forward, use dy/dx

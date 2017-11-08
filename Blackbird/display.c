@@ -38,6 +38,11 @@ void PrintOutLine(pointSet * points) {
 // Updates the timeTracker
 void updateTimeTracker(timeTracker * tracker) {
   tracker->iteration += 1;
+
+}
+
+// Print out timeTracker
+void printTimeTracker(timeTracker * tracker) {
   Printf("Iteration: %d\n",tracker->iteration);
   GhettoPrintf("Execution time (us)",tracker->execution_time);
 }
@@ -110,10 +115,57 @@ void ledColorError(pointSet * points) {
 
   // If the current status is 'outputmode':
   // Other modes not yet implemented
-  else if (points->currentStatusCode == 2) {
-    SetPin(PIN_F1, true);
-    SetPin(PIN_F2, false);
-    SetPin(PIN_F3, true);
+  else if (points->currentStatusCode == 0) {
+    if (points->executionMode == 0) {
+      SetPin(PIN_F1, false);
+      SetPin(PIN_F2, true);
+      SetPin(PIN_F3, true);
+    }
+    else if (points->executionMode == 1) {
+      SetPin(PIN_F1, true);
+      SetPin(PIN_F2, false);
+      SetPin(PIN_F3, true);
+    }
   }
-    
+}
+
+
+void initializeRasPy() {
+  Printf("clrscrn\n");
+  Printf("setscale = 5");
+}
+
+// Prints out information in a machine readable format
+// Intended to pipe info to PySerial
+// Format: struct:var,var... \n struct:var,var; ... \n ...
+void printToPySerial(pointSet * points,HWProfile * profile,timeTracker * time) {
+
+  Printf("clrscrn\n");
+  for (int i=0; i<10; i++) {
+    Printf("drawline:0,0,%f,%f,black\n",
+	   points->x[i],
+	   points->y[i]);
+    Printf("text:%f,%f,%d\n",
+	   points->x[i],
+	   points->y[i],
+	   points->obstacleIndex[i]);
+  }
+
+}
+  
+
+// Prints out info
+// if profile->mode = python-mode, print out to pyserial
+// if profile->mode = uart-mode, print out in a human-readable form
+void printOutInfo (pointSet * points,HWProfile * profile,timeTracker * time) {
+
+  if (points->executionMode == 0) {
+    printTimeTracker(time);
+    PrintOutDistances(points);
+    PrintOutLine(points);
+  }
+  
+  else if (points->executionMode == 1) {
+    printToPySerial(points,profile,time);
+  }
 }

@@ -7,9 +7,9 @@
 int findFirstObstacle(pointSet * points, int obstacle) {
   // find the start index of the current obstacle
   int currentObstacle = 0;
-  int i = 0;
-  while(obstacle != (points->obstacleIndex)[i]) {
-    i += 1;
+  int i = 9;
+  while(obstacle != (points->obstacleIndex)[i] && i>=0) {
+    i -= 1;
   }
   return(i);
 }
@@ -30,12 +30,11 @@ void indexObstacles (pointSet * points) {
 
     // if we're still reading the wall:
     if (obstacleNumber == 0) {
-      
+
       // n_r = 17000 (timeout)
       if ((points->r)[n] >= 100) {
 	obstacleNumber += 1;
 	(points->obstacleIndex)[n] = -1;
-	Printf("timeout\n");
       }
 
       // the wall can't form an acute angle relative to the robot
@@ -45,34 +44,29 @@ void indexObstacles (pointSet * points) {
 			(points->x)[n+1],(points->y)[n+1]) == 0) {
 	obstacleNumber += 1;
 	(points->obstacleIndex)[n] = 0;
-	Printf("acute angle\n");
       }
 
       // otherwise, the wall must just be continuing.
       else {
         (points->obstacleIndex)[n] = 0;
-	Printf("continue wall\n");
       }
     }
     
     // if we're no longer reading the wall
     else {
-      
       // timeout obviously indicates a gap between obstacles
       if ((points->r)[n] >= 100) {
 	obstacleNumber += 1;
 	(points->obstacleIndex)[n] = -1;
-	Printf("obstacle gap\n");
       }
 
       // if two blocks are next to each other,
       // and happen to form a convex angle relative to the robot
       else if (isConvex((points->x)[n-1],(points->y)[n-1],
 			(points->x)[n],(points->y)[n],
-			(points->x)[n+1],(points->y)[n+1])) {
+			(points->x)[n+1],(points->y)[n+1]) == 1 ) {
 	obstacleNumber += 1;
 	(points->obstacleIndex)[n] = obstacleNumber;
-	Printf("points far away\n");
       }
 
       // if two blocks are next each other,
@@ -88,12 +82,10 @@ void indexObstacles (pointSet * points) {
 	      > 4) {
 	obstacleNumber += 1;
 	(points->obstacleIndex)[n] = obstacleNumber;
-	Printf("concave blocks\n");
       }
 
       else {
 	(points->obstacleIndex)[n] = obstacleNumber;
-	Printf("same block");
       }      
     }
   }

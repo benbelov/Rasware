@@ -62,6 +62,10 @@ void PrintOutDistances(pointSet * points);
 void PrintOutLine(pointSet * points);
 void ledColorError(pointSet * points);
 void updateTimeTracker(timeTracker * tracker);
+void printToPySerial(pointSet * points,HWProfile * profile,timeTracker * time);
+void printTimeTracker(timeTracker * tracker);
+void printOutInfo(pointSet * points, HWProfile * profile, timeTracker * time);
+void initializeRasPy();
 
 // sensors.c
 void LoopDelay(float time);
