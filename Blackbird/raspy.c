@@ -11,20 +11,32 @@ void definecolor(char * color, int r, int g, int b) {
 void setscale(float scale) {
   Printf("setscale:%f\n",scale);
 }
-void drawline(float x_1,float y_1,float x_2,float y_2,char * color) {
-  Printf("drawline:%f,%f,%f,%f,%s\n",x_1,y_1,x_2,y_2,color);
-}
 void setoffset(int x, int y) {
   Printf("setoffset:%d,%d\n",x,y);
 }
-void text(float x, float y, int label) {
-  Printf("text:%f,%f,%d\n",x,y,label);
+void drawline(float x_1,float y_1,float x_2,float y_2,char * color) {
+  Printf("drawline:%f,%f,%f,%f,%s\n",x_1,y_1,x_2,y_2,color);
+}
+void drawcircle(float x, float y, float r, char * color) {
+  Printf("drawcircle:%f,%f,%f,%s\n",x,y,r,color);
+}
+void text(float x, float y, char * label, char * color) {
+  Printf("text:%f,%f,%s,%s\n",x,y,label,color);
+}
+void numtext(float x, float y, int label, char * color) {
+  Printf("text:%f,%f,%d,%s\n",x,y,label,color);
 }
 void clrscrn() {
   Printf("clrscrn\n");
 }
+void stopraspy() {
+  Printf("stop\n");
+}
 void startraspy() {
   Printf("start\n");
+}
+void drawbuffer() {
+  Printf("draw\n");
 }
 
 // Set initial values for the RasPy script to use
@@ -46,8 +58,6 @@ void initializeRasPy() {
 // Format: struct:var,var... \n struct:var,var; ... \n ...
 void printToPySerial(pointSet * points,HWProfile * profile,timeTracker * time) {
 
-  clrscrn();
-  
   for (int i=0; i<9; i++) {
     if(points->obstacleIndex[i] == -1) {
       drawline(0,0,points->x[i],points->y[i],"red");
@@ -95,6 +105,8 @@ void printToPySerial(pointSet * points,HWProfile * profile,timeTracker * time) {
       }
     }
     
-    text(points->x[i],points->y[i],points->obstacleIndex[i]);
+    numtext(points->x[i],points->y[i],points->obstacleIndex[i],"black");
   }
+
+  drawbuffer();
 }
