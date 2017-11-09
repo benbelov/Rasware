@@ -65,8 +65,8 @@ void indexObstacles (pointSet * points) {
       else if (isConvex((points->x)[n-1],(points->y)[n-1],
 			(points->x)[n],(points->y)[n],
 			(points->x)[n+1],(points->y)[n+1]) == 1 ) {
-	obstacleNumber += 1;
 	(points->obstacleIndex)[n] = obstacleNumber;
+	obstacleNumber += 1;
       }
 
       // if two blocks are next each other,
@@ -80,8 +80,8 @@ void indexObstacles (pointSet * points) {
 	      pow((points->y)[findFirstObstacle(points,n)] -
 		  (points->y)[n],2)
 	      > 4) {
-	obstacleNumber += 1;
 	(points->obstacleIndex)[n] = obstacleNumber;
+	obstacleNumber += 1;
       }
 
       else {

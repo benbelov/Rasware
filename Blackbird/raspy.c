@@ -48,27 +48,51 @@ void printToPySerial(pointSet * points,HWProfile * profile,timeTracker * time) {
 
   clrscrn();
   
-  for (int i=0; i<10; i++) {
+  for (int i=0; i<9; i++) {
     if(points->obstacleIndex[i] == -1) {
       drawline(0,0,points->x[i],points->y[i],"red");
     }
-    else if(points->obstacleIndex[i] == 0) {
-       drawline(0,0,points->x[i],points->y[i],"black");
+    else if(points->obstacleIndex[i] == points->obstacleIndex[i+1]) {
+      if(points->obstacleIndex[i] == 0) {
+	drawline(points->x[i],points->y[i],
+		 points->x[i+1],points->y[i+1],"black");
+      }
+      else if(points->obstacleIndex[i] == 1) {
+	drawline(points->x[i],points->y[i],
+		 points->x[i+1],points->y[i+1],"blue");
+      }
+      else if(points->obstacleIndex[i] == 2) {
+	drawline(points->x[i],points->y[i],
+		 points->x[i+1],points->y[i+1],"purple");
+      }
+      else if(points->obstacleIndex[i] == 3) {
+	drawline(points->x[i],points->y[i],
+		 points->x[i+1],points->y[i+1],"orange");
+      }
+      else if(points->obstacleIndex[i] == 4) {
+	drawline(points->x[i],points->y[i],
+		 points->x[i+1],points->y[i+1],"green");
+      }
     }
-    else if(points->obstacleIndex[i] == 1) {
-       drawline(0,0,points->x[i],points->y[i],"green");
-    }
-    else if(points->obstacleIndex[i] == 2) {
-       drawline(0,0,points->x[i],points->y[i],"blue");
-    }
-    else if(points->obstacleIndex[i] == 3) {
-       drawline(0,0,points->x[i],points->y[i],"yellow");
-    }
-    else if(points->obstacleIndex[i] == 4) {
-       drawline(0,0,points->x[i],points->y[i],"purple");
-    }
-    else if(points->obstacleIndex[i] == 5) {
-       drawline(0,0,points->x[i],points->y[i],"orange");
+    else {   
+      if(points->obstacleIndex[i] == 0) {
+	drawline(0,0,points->x[i],points->y[i],"black");
+      }
+      else if(points->obstacleIndex[i] == 1) {
+	drawline(0,0,points->x[i],points->y[i],"blue");
+      }
+      else if(points->obstacleIndex[i] == 2) {
+	drawline(0,0,points->x[i],points->y[i],"purple");
+      }
+      else if(points->obstacleIndex[i] == 3) {
+	drawline(0,0,points->x[i],points->y[i],"orange");
+      }
+      else if(points->obstacleIndex[i] == 4) {
+	drawline(0,0,points->x[i],points->y[i],"green");
+      }
+      else {
+	drawline(0,0,points->x[i],points->y[i],"black");
+      }
     }
     
     text(points->x[i],points->y[i],points->obstacleIndex[i]);

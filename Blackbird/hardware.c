@@ -19,7 +19,7 @@ void initHardware(HWProfile * profile) {
   }
   profile->echo_1 = PIN_E2;
   profile->echo_2 = PIN_E3;
-  profile->timeout_us = 30000;
+  profile->timeout_us = 50000;
 
   // IR sensor constants
   profile->linesensor = InitializeGPIOLineSensor(PIN_B0,PIN_B1,
