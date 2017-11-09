@@ -1,13 +1,4 @@
 # Python visualizer for the launchpad
-# Available functions:
-#      'definecolor:str color,int r,int g,int b\n'
-#             built in: black = 0,0,0; white = 255,255,255
-#      'setscale:float scale\n'
-#      'setoffset:int x,int y\n'
-#      'drawline:float x_1,float y_1,float x_2,float y_2,str color\n'
-#      'drawcircle:float x,float y,float r,str color\n'
-#      'text:float x,float y,text\n'
-#      'clrscrn'
 #
 
 from livewires import *
@@ -37,102 +28,81 @@ class tm4c_launchpad:
         self.scale = 1
         self.x_offset = 400
         self.y_offset = 100
-        self.current_line = ""
 
+        # command dictionary
+        self.commands = {"definecolor":["s","d","d","d"],
+                         "setscale":["f"],
+                         "setoffset":["d","d"],
+                         "drawline":["f","f","f","f","s"],
+                         "drawcircle":["f","f","f","s"],
+                         "text":["f","f","s","s"],
+                         "clrscrn":[],
+                         "start":[],
+                         "stop":[]}
+        
     # get launchpad uart output
     def get_line(self):
-        self.current_line = self.device.readline().strip()
+        return(self.device.readline().strip())
 
-    # decide which method to call
-    def process_line(self):
-        if(self.current_line[0:11] == "definecolor"):
-            self.color_update()
-        elif(self.current_line[0:8] == "setscale"):
-            self.scale_update()
-        elif(self.current_line[0:9] == "setoffset"):
-            self.set_offset()
-        elif(self.current_line[0:8] == "drawline"):
-            self.draw_line()
-        elif(self.current_line[0:4] == "text"):
-            self.text()
-        elif(self.current_line[0:7] == "clrscrn"):
-            self.clrscrn()
-        elif(self.current_line != ""):
-            self.unknown_cmd()
+    # parse command into opcode and arguments
+    def parse_line(code_line):
+
+        # intialize args as an empty array
+        arguments = []
+
+        # if a colon is not found, then the opcode has no args       
+        opcode_end = code_line.find(":")
+        if(opcode_end == -1):
+            arguments += code_line
+
+        # else, strip out the opcode
+        else:
+            arguments += code_line[0:opcode_end]
+            previous_arg_end = opcode_end
+            current_arg_end = code_line.find[",",opcode_end + 1]
             
-    # if the 'definecolor' command is called:
-    def color_update(self):
-
-        color_name_end = self.current_line.find(",")
-        r_end = self.current_line.find(",",color_name_end+1)
-        g_end = self.current_line.find(",",r_end+1)
-        b_end = len(self.current_line)
-        color_name = self.current_line[12:color_name_end]
+            # then separate the arguments
+            while(current_arg_end != -1):
+                arguments += string[previous_arg_end + 1:current_arg_end]
+                previous_arg_end = current_arg_end
+                current_arg_end = string.find(",",current_arg_end + 1)
                 
-        r_val = float(self.current_line[color_name_end+1:r_end])
-        g_val = float(self.current_line[r_end+1:g_end])
-        b_val = float(self.current_line[g_end+1:b_end])
-        self.colors[color_name] = (r_val,g_val,b_val)
-            
-    # if the 'setscale' command is called:
-    def scale_update(self):
-        scale_end = len(self.current_line)
-        self.scale = float(self.current_line[9:scale_end])
+            arguments += code_line[previous_arg_end:len(code_line)]
 
-    # if the 'setoffset' command is called:
-    def set_offset(self):
-        x_offset_end = self.current_line.find(",")
-        y_offset_end = self.current_line.find(",",x_offset_end+1)
+        return(arguments)
 
-        self.x_offset = int(x_offset_end)
-        self.y_offset = int(y_offset_end)
+    # process arguments into an array
+    def process_args(raw_arguments):
 
-    # if the 'drawline' command is called:
-    def draw_line(self):
-        x1_end = self.current_line.find(",")
-        y1_end = self.current_line.find(",",x1_end+1)
-        x2_end = self.current_line.find(",",y1_end+1)
-        y2_end = self.current_line.find(",",x2_end+1)
-        color_end = len(self.current_line)
+        arguments = []
+        opcode = raw_arguments[0]
+        arguments[0] = raw_arguments[0]
 
-        x1 = (self.x_offset +
-              self.scale*float(self.current_line[9:x1_end]))
-        y1 = (self.y_offset +
-              self.scale*float(self.current_line[x1_end+1:y1_end]))
-        x2 = (self.x_offset +
-              self.scale*float(self.current_line[y1_end+1:x2_end]))
-        y2 = (self.y_offset +
-              self.scale*float(self.current_line[x2_end+1:y2_end]))
+        n = 1
+        while(n<len(raw_arguments)):
 
-        try:
-            color = self.colors[self.current_line[y2_end+1:color_end]]
-
-        except:
-            color = (0,0,0)
-            
-        set_colour(Colour(color[0],color[1],color[2]))
-        line(x1,y1,x2,y2)
-
-    # if the text command is called:
-    def text(self):
-        x_end = self.current_line.find(",")
-        y_end = self.current_line.find(",",x_end+1)
-        text_end = len(self.current_line)
-
-        x = (self.x_offset +
-             self.scale*float(self.current_line[5:x_end]))
-        y = (self.y_offset +
-             self.scale*float(self.current_line[x_end+1:y_end]))
-        move(x,y)
-        text(self.current_line[y_end+1:text_end])
+            argument_type = self.commands[opcode][n-1]
+            # integer type
+            if(argument_type == "d"):
+                arguments[n] = int(raw_arguments[n])
+            # string type
+            else if(argument_type == "s"):
+                arguments[n] = raw_arguments[n]
+            # float type
+            else if(argument_type == "f"):
+                arguments[n] = float(raw_arguments[n])
+            # long type
+            else if(argument_type == "l"):
+                arguments[n] = int(raw_arguments[n]*10000 +
+                                   raw_arguments[n+1])
+            # empty type, for when one arg takes up two spaces
+            else if(argument_type == "_"):
+                arguments[n] = 0
+            # error type, when the type doesn't match
+            else:
+                arguments[n] = "ERR"
         
-    # if the 'clrscrn' command is called:
-    def clrscrn(self):
-        clear_screen()
-
-    # if the command isn't recognized:
-    def unknown_cmd(self):
-        print("unknown command:"+self.current_line+"\n")
+        return(arguments)
 
 
 # main code
