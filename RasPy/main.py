@@ -7,6 +7,9 @@ import serial
 # launchpad data goes in a launchpad object instance
 class tm4c_launchpad:
 
+    #
+    # initialization
+    #
     def __init__(self, path):
         
         # 115200 baud is a huge improvement over 9600
@@ -28,6 +31,7 @@ class tm4c_launchpad:
         self.scale = 1
         self.x_offset = 400
         self.y_offset = 100
+        self.run = False
 
         # command dictionary
         self.commands =
@@ -50,13 +54,19 @@ class tm4c_launchpad:
             "start":[],
             # stop drawing
             "stop":[]
+            # draw current buffer
+            "draw":[]
         }
-        
+
+    #
     # get launchpad uart output
+    #
     def get_line(self):
         return(self.device.readline().strip())
 
+    #
     # parse command into opcode and arguments
+    #
     def parse_line(code_line):
 
         # intialize args as an empty array
@@ -83,7 +93,9 @@ class tm4c_launchpad:
 
         return(arguments)
 
+    #
     # process arguments into an array
+    #
     def process_args(raw_arguments):
 
         arguments = []
@@ -116,16 +128,37 @@ class tm4c_launchpad:
         
         return(arguments)
 
+    #
+    # decide what to do
+    #
+    def update(self):
+        is_frame_draw = self.update_buffer()
+        if(is_frame_draw):
+            self.execute_buffer()
+            self.initialize_buffer()
+        
+    #
     # initialize (clear) instruction buffer
+    #
     def initialize_buffer(self):
         self.draw_buffer = []
 
+    #
     # update the instruction buffer with the current instruction
+    #
     def update_buffer(self):
         instruction = process_args(parse_line(get_line()))
-        self.draw_buffer += instruction
 
+        if(instruction[0] == "draw"):
+            return(True)
+        else:
+            self.draw_buffer += instruction
+            return(False)
+
+
+    #
     # execute the instruction buffer
+    #
     def execute_buffer(self):
 
         for instruction in self.draw_buffer:
@@ -165,27 +198,22 @@ class tm4c_launchpad:
                 except:
                     colortuple = self.colors["black"]
                 set_colour(colortuple[0],colortuple[1],colortuple[2])
-                
-                     
+                circle(x,y,r)
+
+            # text: float x, float y, str label, str color
             else if(instruction[0] == "text"):
+                try:
+                    colortuple = self.colors[instruction[4]]
+                except:
+                    colortuple = self.colors["black"]
+                set_colour(colortuple[0],colortuple[1],colortuple[2])
+                move(instruction[1],instruction[2])
+                text(instruction[3])
 
+            # clrscrn
             else if(instruction[0] == "clrscrn"):
+                clear_screen()
 
-            else if(instruction[0] == "start"):
-
-            else if(instruction[0] == "stop"):
-            # float x_1, float y_1, float x_1, float y_1, str color
-            "drawline":["f","f","f","f","s"],
-            # float x, float y, float r, str color
-            "drawcircle":["f","f","f","s"],
-            # float x, float y, str label, str color
-            "text":["f","f","s","s"],
-            # clear screen
-            "clrscrn":[],
-            # start drawing
-            "start":[],
-            # stop drawing
-            "stop":[]
 
 # main code
 launchpad = tm4c_launchpad('/dev/lm4f')
@@ -199,4 +227,4 @@ while(1):
     
 while(1):
     launchpad.get_line()
-    launchpad.process_line()
+    launchpad.initialize_buffer()
