@@ -30,15 +30,27 @@ class tm4c_launchpad:
         self.y_offset = 100
 
         # command dictionary
-        self.commands = {"definecolor":["s","d","d","d"],
-                         "setscale":["f"],
-                         "setoffset":["d","d"],
-                         "drawline":["f","f","f","f","s"],
-                         "drawcircle":["f","f","f","s"],
-                         "text":["f","f","s","s"],
-                         "clrscrn":[],
-                         "start":[],
-                         "stop":[]}
+        self.commands =
+        {
+            # str name, int r, int g, int b
+            "definecolor":["s","d","d","d"],
+            # float scale
+            "setscale":["f"],
+            # int xoffset, in yoffset
+            "setoffset":["d","d"],
+            # float x_1, float y_1, float x_1, float y_1, str color
+            "drawline":["f","f","f","f","s"],
+            # float x, float y, float r, str color
+            "drawcircle":["f","f","f","s"],
+            # float x, float y, str label, str color
+            "text":["f","f","s","s"],
+            # clear screen
+            "clrscrn":[],
+            # start drawing
+            "start":[],
+            # stop drawing
+            "stop":[]
+        }
         
     # get launchpad uart output
     def get_line(self):
@@ -104,6 +116,76 @@ class tm4c_launchpad:
         
         return(arguments)
 
+    # initialize (clear) instruction buffer
+    def initialize_buffer(self):
+        self.draw_buffer = []
+
+    # update the instruction buffer with the current instruction
+    def update_buffer(self):
+        instruction = process_args(parse_line(get_line()))
+        self.draw_buffer += instruction
+
+    # execute the instruction buffer
+    def execute_buffer(self):
+
+        for instruction in self.draw_buffer:
+
+            # definecolor: str color, int r, int g, int b
+            if(instruction[0] == "definecolor"):
+                self.colors[instruction[1] = (instruction[2],
+                                              instruction[3],
+                                              instruction[4])
+
+            # setscale: float scale
+            else if(instruction[0] == "setscale"):
+                self.scale = instruction[1]
+
+            # setoffset: int x, int y
+            else if(instruction[0] == "setoffset"):
+                self.x_offset = instruction[1]
+                self.y_offset = instruction[2]
+            
+            # drawline: float x_1, float y_1,
+            #           float x_1, float y_1, str color
+            else if(instruction[0] == "drawline"):
+                try:
+                    colortuple = self.colors[instruction[5]]
+                except:
+                    colortuple = self.colors["black"]
+                set_colour(colortuple[0],colortuple[1],colortuple[2])
+                line(instruction[1],
+                     instruction[2],
+                     instruction[3],
+                     instruction[4]
+
+            # drawcircle: float x, float y, float r, str color
+            else if(instruction[0] == "drawcircle"):
+                try:
+                    colortuple = self.colors[instruction[5]]
+                except:
+                    colortuple = self.colors["black"]
+                set_colour(colortuple[0],colortuple[1],colortuple[2])
+                
+                     
+            else if(instruction[0] == "text"):
+
+            else if(instruction[0] == "clrscrn"):
+
+            else if(instruction[0] == "start"):
+
+            else if(instruction[0] == "stop"):
+            # float x_1, float y_1, float x_1, float y_1, str color
+            "drawline":["f","f","f","f","s"],
+            # float x, float y, float r, str color
+            "drawcircle":["f","f","f","s"],
+            # float x, float y, str label, str color
+            "text":["f","f","s","s"],
+            # clear screen
+            "clrscrn":[],
+            # start drawing
+            "start":[],
+            # stop drawing
+            "stop":[]
 
 # main code
 launchpad = tm4c_launchpad('/dev/lm4f')
