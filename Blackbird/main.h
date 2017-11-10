@@ -48,6 +48,7 @@ struct HWProfile {
   long timeout_us;
   tMotor *left;
   tMotor *right;
+  tMotor *small;
   tADC *linesensor[5];
   float threshhold;
 };

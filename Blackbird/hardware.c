@@ -31,7 +31,8 @@ void initHardware(HWProfile * profile) {
   profile->threshhold = 0.5;
   
   // Initialize servo motors
-  //profile->left = InitializeServoMotor(PIN_E4,false);
-  //profile->right = InitializeServoMotor(PIN_E5,true);
+  profile->left = InitializeServoMotor(PIN_A4,false);
+  profile->right = InitializeServoMotor(PIN_B7,true);
+  profile->small = InitializeServo(PIN_B6,true);
 
 }
