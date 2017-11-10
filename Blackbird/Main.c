@@ -50,7 +50,7 @@ int main(void){
     ledColorError(&points);
 
     // Delay for 1 second
-    //LoopDelay(0.1);
+    LoopDelay(1);
   }
   
   return 0;

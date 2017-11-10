@@ -7,6 +7,7 @@
 #include <RASLib/inc/uart.h>
 #include <RASLib/inc/motor.h>
 #include <RASLib/inc/linesensor.h>
+#include <RASLib/inc/adc.h>
 
 // Stellarisware include:
 #include <StellarisWare/driverlib/rom.h>
@@ -47,7 +48,7 @@ struct HWProfile {
   long timeout_us;
   tMotor *left;
   tMotor *right;
-  tLineSensor *linesensor;
+  tADC *linesensor[5];
   float threshhold;
 };
 

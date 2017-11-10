@@ -11,6 +11,7 @@ void initHardware(HWProfile * profile) {
   
   // Initialize GPIO
   InitializeGPIO();
+
   
   // Distance sensor constants
   tPin trigger_pins_temp[5] = {PIN_D0,PIN_D1,PIN_D2,PIN_D3,PIN_E1};
@@ -22,15 +23,15 @@ void initHardware(HWProfile * profile) {
   profile->timeout_us = 50000;
 
   // IR sensor constants
-  profile->linesensor = InitializeGPIOLineSensor(PIN_B0,PIN_B1,
-  						 PIN_E4,PIN_E5,
-  						 PIN_B4,PIN_A5,
-  						 PIN_A6,PIN_A7);
-  SetPin(PIN_B5,true);
-  profile->threshhold = 0.1;
+  (profile->linesensor)[0] = InitializeADC(PIN_B5);
+  (profile->linesensor)[1] = InitializeADC(PIN_E4);
+  (profile->linesensor)[2] = InitializeADC(PIN_E5);
+  (profile->linesensor)[3] = InitializeADC(PIN_B4);
+  (profile->linesensor)[4] = InitializeADC(PIN_E0);
+  profile->threshhold = 0.5;
   
   // Initialize servo motors
-  profile->left = InitializeServoMotor(PIN_E4,false);
-  profile->right = InitializeServoMotor(PIN_E5,true);
+  //profile->left = InitializeServoMotor(PIN_E4,false);
+  //profile->right = InitializeServoMotor(PIN_E5,true);
 
 }
