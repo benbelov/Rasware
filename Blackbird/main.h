@@ -32,6 +32,9 @@ struct pointSet {
   int heartBeat;
   int errorCode;
   int executionMode;
+  // integral term for IR PID and previous error
+  float irErrInt;
+  float lastErr;
 };
 
 // definition of the hardware profile structure
@@ -54,6 +57,7 @@ typedef struct timeTracker timeTracker;
 struct timeTracker {
   int iteration;
   long execution_time;
+  long lastTime;
 };
    
 // display.c
@@ -98,7 +102,7 @@ int isConvex(float a_x,float a_y,float b_x,float b_y,float c_x,float c_y);
 void indexObstacles(pointSet * points);
 float chooseTarget(pointSet * points); // not done
 float pidControl(float target, float * targetHistory); // not done
-float IRpidControl(); // not done
+float IRpidControl(float * correctionHistory, timeTracker * tracker); // not done
 
 // control.c
 void setMotors(float pidCoefficient,float sensitivity); // not done

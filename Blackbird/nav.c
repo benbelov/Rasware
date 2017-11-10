@@ -3,6 +3,7 @@
 #include "main.h"
 #include <math.h>
 
+
 // finds the first element of the input obstacle index
 int findFirstObstacle(pointSet * points, int obstacle) {
   // find the start index of the current obstacle
@@ -89,4 +90,39 @@ void indexObstacles (pointSet * points) {
       }      
     }
   }
+}
+
+float IRpidControl(timeTracker * tracker, pointSet * points)
+{
+  float kp = 1;
+  float ki = 0.5;
+  float kd = 0.1;
+
+  if(tracker->lastTime == 0)
+  {
+    tracker->lastTime = (long) GetTimeUS();
+  }
+
+  long nowTime = (long) GetTimeUS();
+  long dTime = nowTime - tracker->lastTime;
+  float error = 0;
+
+  for(int sensor = 0; sensor < 8; sensor ++)
+  {
+    if((points->line)[sensor] == "1")
+    {
+      error += (sensor-4)/10.0;
+    }
+  }
+
+  points->irErrInt += (error * dTime);
+
+  float dErr = (error - lastError) / dTime;
+
+  float out = kp * error + ki * points->irErrInt + kd * dErr;
+
+  lastErr = error;
+  points->lastTime = now;
+
+  return out;
 }

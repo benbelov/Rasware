@@ -11,6 +11,8 @@ int main(void){
   pointSet points;
   points.currentStatusCode = 0;
   points.executionMode = 1;
+  points.irErrInt = 0;
+  points.lastErr = 0;
 
   // Initializ HWProfile struct for storing hardware info
   // and set up motors and GPIO
@@ -20,6 +22,7 @@ int main(void){
   // Initialize timeTracker struct
   timeTracker time;
   time.iteration = 0;
+  time.lastTime = 0;
   
   Printf("Hello World\n\n");
 
