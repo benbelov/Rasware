@@ -130,8 +130,14 @@ float IRpidControl(timeTracker * tracker, pointSet * points)
     {
       error = -1;
     }
+    else if (points->lastErr == 0)
+    {
+      error = 0;
+    }
     else
+    {
       error = 1;
+    }
   }
 
   points->lastErr = error;
