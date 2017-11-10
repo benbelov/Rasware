@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <math.h>
 
 // Raslib includes:
 #include <RASLib/inc/common.h>
@@ -6,6 +7,7 @@
 #include <RASLib/inc/time.h>
 #include <RASLib/inc/uart.h>
 #include <RASLib/inc/motor.h>
+#include <RASLib/inc/servo.h>
 #include <RASLib/inc/linesensor.h>
 #include <RASLib/inc/adc.h>
 
@@ -25,7 +27,7 @@ struct pointSet {
   // IR array raw output
   float reflectances[8];
   // IR array processed output
-  float line[8];
+  char line[8];
   // output of indexObstacles
   int obstacleIndex[10];
   // 0 = display heartBeat; 1 = display errorCode; 2 = display executionMode
@@ -48,7 +50,7 @@ struct HWProfile {
   long timeout_us;
   tMotor *left;
   tMotor *right;
-  tMotor *small;
+  tServo *small;
   tADC *linesensor[5];
   float threshhold;
 };
@@ -104,10 +106,10 @@ int isConvex(float a_x,float a_y,float b_x,float b_y,float c_x,float c_y);
 void indexObstacles(pointSet * points);
 float chooseTarget(pointSet * points); // not done
 float pidControl(float target, float * targetHistory); // not done
-float IRpidControl(float * correctionHistory, timeTracker * tracker); // not done
+float IRpidControl(timeTracker * tracker, pointSet * points);
 
 // control.c
-void setMotors(float pidCoefficient,float sensitivity); // not done
+void setMotors(float pidCoefficient,float sensitivity,HWProfile * profile); // not done
 
 // hardware.c
 void initHardware(HWProfile * profile);

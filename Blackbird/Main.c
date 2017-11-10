@@ -32,14 +32,15 @@ int main(void){
   while(true) {
 
     // Get ultrasonic sensor distances
-    getDistance(&points,&profile,&time);
+    //getDistance(&points,&profile,&time);
 
     // Get line sensor reflectances
     getLineData(&points,&profile);
 
+    setMotors(IRpidControl(&time,&points),1,&profile);
     // Computations
-    cartesian(&points);
-    indexObstacles(&points);
+    //cartesian(&points);
+    //indexObstacles(&points);
 
     // Update tracker
     updateTimeTracker(&time);
