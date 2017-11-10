@@ -26,6 +26,9 @@ void text(float x, float y, char * label, char * color) {
 void numtext(float x, float y, int label, char * color) {
   Printf("text:%f,%f,%d,%s\n",x,y,label,color);
 }
+void echo(char * message) {
+  Printf("echo:%s\n",message);
+}    
 void clrscrn() {
   Printf("clrscrn\n");
 }
@@ -44,7 +47,7 @@ void initializeRasPy() {
   startraspy();
   clrscrn();
   setoffset(400,100);
-  setscale(5);
+  setscale(2);
   definecolor("red",1,0,0);
   definecolor("green",0,1,0);
   definecolor("blue",0,0,1);
@@ -105,9 +108,10 @@ void printToPySerial(pointSet * points,HWProfile * profile,timeTracker * time) {
 	drawline(0,0,points->x[i],points->y[i],"black");
       }
     }
-    
+
     numtext(points->x[i],points->y[i],points->obstacleIndex[i],"black");
   }
+  
   clrscrn();
 
   drawbuffer();
