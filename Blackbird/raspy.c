@@ -28,7 +28,10 @@ void numtext(float x, float y, int label, char * color) {
 }
 void echo(char * message) {
   Printf("echo:%s\n",message);
-}    
+}
+void echofloat(float message) {
+  Printf("echo:%f\n",message);
+}
 void clrscrn() {
   Printf("clrscrn\n");
 }
@@ -47,7 +50,7 @@ void initializeRasPy() {
   startraspy();
   clrscrn();
   setoffset(400,100);
-  setscale(2);
+  setscale(5);
   definecolor("red",1,0,0);
   definecolor("green",0,1,0);
   definecolor("blue",0,0,1);
@@ -90,26 +93,36 @@ void printToPySerial(pointSet * points,HWProfile * profile,timeTracker * time) {
     }
     else {   
       if(points->obstacleIndex[i] == 0) {
-	drawline(0,0,points->x[i],points->y[i],"black");
+	drawcircle(points->x[i],points->y[i],2,"black");
       }
       else if(points->obstacleIndex[i] == 1) {
-	drawline(0,0,points->x[i],points->y[i],"blue");
+	drawcircle(points->x[i],points->y[i],2,"blue");
       }
       else if(points->obstacleIndex[i] == 2) {
-	drawline(0,0,points->x[i],points->y[i],"purple");
+	drawcircle(points->x[i],points->y[i],2,"purple");
       }
       else if(points->obstacleIndex[i] == 3) {
-	drawline(0,0,points->x[i],points->y[i],"orange");
+	drawcircle(points->x[i],points->y[i],2,"orange");
       }
       else if(points->obstacleIndex[i] == 4) {
-	drawline(0,0,points->x[i],points->y[i],"green");
+	drawcircle(points->x[i],points->y[i],2,"green");
       }
       else {
-	drawline(0,0,points->x[i],points->y[i],"black");
+	drawcircle(points->x[i],points->y[i],2,"black");
       }
     }
 
     numtext(points->x[i],points->y[i],points->obstacleIndex[i],"black");
+  }
+
+  char line_array_str[16];
+  for(int i=0; i<5; i++) {
+    line_array_str[2*i] = ' ';
+    line_array_str[2*i+1] = (points->line)[i];
+  }
+  echo(line_array_str);
+  for(int i=0; i<5; i++) {
+    echofloat(points->reflectances[i]);
   }
   
   clrscrn();

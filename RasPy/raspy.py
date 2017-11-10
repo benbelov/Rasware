@@ -48,7 +48,7 @@ class tm4c_launchpad:
             # float x, float y, str label, str color
             "text":["f","f","d","s","s"],
             # str message
-            "echo":[],
+            "echo":["s"],
             # clear screen
             "clrscrn":[],
             # start drawing
@@ -211,7 +211,7 @@ class tm4c_launchpad:
             # drawcircle: float x, float y, float r, str color
             elif(instruction[0] == "drawcircle"):
                 try:
-                    colortuple = self.colors[instruction[5]]
+                    colortuple = self.colors[instruction[4]]
                 except:
                     colortuple = self.colors["black"]
                 set_colour(Colour(colortuple[0],
