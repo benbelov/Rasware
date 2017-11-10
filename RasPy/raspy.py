@@ -31,6 +31,7 @@ class tm4c_launchpad:
         self.x_offset = 400
         self.y_offset = 100
         self.run = False
+        self.draw_buffer = []
 
         # command dictionary
         self.commands = {
@@ -67,65 +68,74 @@ class tm4c_launchpad:
     #
     # parse command into opcode and arguments
     #
-    def parse_line(code_line):
-
+    def parse_line(self,code_line):
+        
         # intialize args as an empty array
         arguments = []
-
+        
         # if a colon is not found, then the opcode has no args       
         opcode_end = code_line.find(":")
         if(opcode_end == -1):
-            arguments += code_line
+            arguments.append(code_line)
 
         # else, strip out the opcode
         else:
-            arguments += code_line[0:opcode_end]
+            arguments.append(code_line[0:opcode_end])
             previous_arg_end = opcode_end
-            current_arg_end = code_line.find[",",opcode_end + 1]
+            current_arg_end = code_line.find(",",opcode_end + 1)
             
             # then separate the arguments
             while(current_arg_end != -1):
-                arguments += string[previous_arg_end + 1:current_arg_end]
+                arguments.append(code_line[previous_arg_end+1:
+                                           current_arg_end])
                 previous_arg_end = current_arg_end
-                current_arg_end = string.find(",",current_arg_end + 1)
+                current_arg_end = code_line.find(",",current_arg_end + 1)
                 
-            arguments += code_line[previous_arg_end:len(code_line)]
+            arguments.append(code_line[previous_arg_end+1:len(code_line)])
 
         return(arguments)
 
     #
     # process arguments into an array
     #
-    def process_args(raw_arguments):
+    def process_args(self,raw_arguments):
 
         arguments = []
         opcode = raw_arguments[0]
-        arguments[0] = raw_arguments[0]
+        arguments.append(raw_arguments[0])
 
         n = 1
         while(n<len(raw_arguments)):
 
-            argument_type = self.commands[opcode][n-1]
+            try:
+                argument_type = self.commands[opcode][n-1]
+            except:
+                print("Error: unrecognized opcode")
+                print(opcode)
+                argument_type = "ERR"
+                
             # integer type
             if(argument_type == "d"):
-                arguments[n] = int(raw_arguments[n])
+                arguments.append(int(raw_arguments[n]))
             # string type
             elif(argument_type == "s"):
-                arguments[n] = raw_arguments[n]
+                arguments.append(raw_arguments[n])
             # float type
             elif(argument_type == "f"):
-                arguments[n] = float(raw_arguments[n])
+                arguments.append(float(raw_arguments[n]))
             # long type
             elif(argument_type == "l"):
-                arguments[n] = int(raw_arguments[n]*10000 +
-                                   raw_arguments[n+1])
+                arguments.append(int(raw_arguments[n]*10000 +
+                                   raw_arguments[n+1]))
             # empty type, for when one arg takes up two spaces
             elif(argument_type == "_"):
-                arguments[n] = 0
+                arguments.append(0)
             # error type, when the type doesn't match
             else:
-                arguments[n] = "ERR"
-        
+                arguments.append("ERR")
+                
+            n += 1
+                
         return(arguments)
 
     #
@@ -147,8 +157,8 @@ class tm4c_launchpad:
     # update the instruction buffer with the current instruction
     #
     def update_buffer(self):
-        instruction = process_args(parse_line(get_line()))
-
+        instruction = self.parse_line(self.get_line())
+        
         if(instruction[0] == "draw"):
             return(True)
         elif(instruction[0] == "start"):
@@ -158,7 +168,7 @@ class tm4c_launchpad:
             self.run = False
             return(False)
         elif(self.run == True):
-            self.draw_buffer += instruction
+            self.draw_buffer.append(self.process_args(instruction))
             return(False)
 
     #
@@ -190,11 +200,13 @@ class tm4c_launchpad:
                     colortuple = self.colors[instruction[5]]
                 except:
                     colortuple = self.colors["black"]
-                set_colour(colortuple[0],colortuple[1],colortuple[2])
-                line(instruction[1],
-                     instruction[2],
-                     instruction[3],
-                     instruction[4])
+                set_colour(Colour(colortuple[0],
+                                  colortuple[1],
+                                  colortuple[2]))
+                line(self.scale*instruction[1] + self.x_offset,
+                     self.scale*instruction[2] + self.y_offset,
+                     self.scale*instruction[3] + self.x_offset,
+                     self.scale*instruction[4] + self.y_offset)
 
             # drawcircle: float x, float y, float r, str color
             elif(instruction[0] == "drawcircle"):
@@ -202,18 +214,25 @@ class tm4c_launchpad:
                     colortuple = self.colors[instruction[5]]
                 except:
                     colortuple = self.colors["black"]
-                set_colour(colortuple[0],colortuple[1],colortuple[2])
-                circle(x,y,r)
+                set_colour(Colour(colortuple[0],
+                                  colortuple[1],
+                                  colortuple[2]))
+                circle(self.scale*instruction[1] + self.x_offset,
+                       self.scale*instruction[2] + self.y_offset,
+                       self.scale*instruction[3])
 
             # text: float x, float y, str label, str color
             elif(instruction[0] == "text"):
                 try:
-                    colortuple = self.colors[instruction[5]]
+                    colortuple = self.colors[instruction[4]]
                 except:
                     colortuple = self.colors["black"]
-                set_colour(colortuple[0],colortuple[1],colortuple[2])
-                move(instruction[1],instruction[2])
-                text(instruction[4])
+                set_colour(Colour(colortuple[0],
+                                  colortuple[1],
+                                  colortuple[2]))
+                move(self.scale*instruction[1] + self.x_offset,
+                     self.scale*instruction[2] + self.y_offset)
+                text(instruction[3])
 
             # echo: str message
             elif(instruction[0] == "echo"):

@@ -43,6 +43,7 @@ void drawbuffer() {
 void initializeRasPy() {
   startraspy();
   clrscrn();
+  setoffset(400,100);
   setscale(5);
   definecolor("red",1,0,0);
   definecolor("green",0,1,0);
@@ -107,6 +108,7 @@ void printToPySerial(pointSet * points,HWProfile * profile,timeTracker * time) {
     
     numtext(points->x[i],points->y[i],points->obstacleIndex[i],"black");
   }
+  clrscrn();
 
   drawbuffer();
 }
