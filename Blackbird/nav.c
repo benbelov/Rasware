@@ -1,7 +1,6 @@
 // Nav.c in /Blackbird
 // Contains navigation algorithm functions
 #include "main.h"
-#include <math.h>
 
 
 // finds the first element of the input obstacle index
@@ -111,7 +110,7 @@ float IRpidControl(timeTracker * tracker, pointSet * points)
 
   for(int sensor = 0; sensor < 5; sensor ++)
   {
-    if((points->line)[sensor-1] == "1")
+    if((points->line)[sensor-1] == '1')
     {
       error += (sensor-2)/5.0;
       line01 = 1;
@@ -120,7 +119,7 @@ float IRpidControl(timeTracker * tracker, pointSet * points)
 
   points->irErrInt += (error * dTime);
 
-  float dErr = (error - lastError) / dTime;
+  float dErr = (error - points->lastErr) / dTime;
 
   float out = kp * error + ki * points->irErrInt + kd * dErr;
 
@@ -141,7 +140,7 @@ float IRpidControl(timeTracker * tracker, pointSet * points)
   }
 
   points->lastErr = error;
-  points->lastTime = now;
+  tracker->lastTime = nowTime;
 
   return out;
 }
