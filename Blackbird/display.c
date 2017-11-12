@@ -1,7 +1,7 @@
 // display.c in /Blackbird
 // File containing I/O, debugging, and diagnostic subroutines
 
-#include "main.h"
+#include "display.h"
 
 
 // Printf from uart.h doesn't support long. Here we go!

@@ -1,8 +1,9 @@
 // control.c in /Blackbird
 // Contains motor control subroutines
 
-#include "main.h"
+#include "control.h"
 
+// Sets motor speeds based on an input pidCoefficient and sensitivity
 void setMotors(float pidCoefficient,float sensitivity, HWProfile * profile)
 {
 	float left;

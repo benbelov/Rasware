@@ -1,7 +1,7 @@
 // sensors.c in /Blackbird
 // Contains subroutines for obtaining sensor readings
 
-#include "main.h"
+#include "sensors.h"
 
 
 

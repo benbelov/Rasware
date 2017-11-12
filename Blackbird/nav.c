@@ -1,7 +1,7 @@
 // Nav.c in /Blackbird
 // Contains navigation algorithm functions
-#include "main.h"
 
+#include "nav.h"
 
 // finds the first element of the input obstacle index
 int findFirstObstacle(pointSet * points, int obstacle) {
@@ -81,6 +81,8 @@ void indexObstacles (pointSet * points) {
   }
 }
 
+// Takes IR array output and applies PID control
+// I and D terms currently disabled
 float IRpidControl(timeTracker * tracker, pointSet * points)
 {
   float kp = 1;

@@ -1,7 +1,7 @@
 // hardware.c in /Blackboard
 // Contains hardware related functions
 
-#include "main.h"
+#include "hardware.h"
 
 // initHardware
 // initializes hardware profile and sets values

@@ -1,7 +1,7 @@
 // math.c in /Blackbird
 // Math routines for the navigation algorithm
 
-#include "main.h"
+#include "math.h"
 
 // trig tables
 const float sinTable[] = {0,             0.34202014332,

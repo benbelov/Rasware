@@ -1,7 +1,7 @@
 // raspy.c in /Blackbird
 // contains rubroutines for interacting with RasPy
 
-#include "main.h"
+#include "raspy.h"
 
 
 // Translation routines
@@ -101,19 +101,19 @@ void printToPySerial(pointSet * points,HWProfile * profile,timeTracker * time) {
     }
 
     if(points->obstacleIndex[i] == 1) {
-      drawcircle(points->x[i],points->y[i],2,"blue");
+      drawcircle(points->x[i],points->y[i],3,"blue");
     }
     else if(points->obstacleIndex[i] == 2) {
-      drawcircle(points->x[i],points->y[i],2,"purple");
+      drawcircle(points->x[i],points->y[i],3,"purple");
     }
     else if(points->obstacleIndex[i] == 3) {
-      drawcircle(points->x[i],points->y[i],2,"orange");
+      drawcircle(points->x[i],points->y[i],3,"orange");
     }
     else if(points->obstacleIndex[i] == 4) {
-      drawcircle(points->x[i],points->y[i],2,"green");
+      drawcircle(points->x[i],points->y[i],3,"green");
     }
     else if(points->obstacleIndex[i] != 0) {
-      drawcircle(points->x[i],points->y[i],2,"black");
+      drawcircle(points->x[i],points->y[i],3,"black");
     }
 
     numtext(points->x[i],points->y[i],points->obstacleIndex[i],"black");
