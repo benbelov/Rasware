@@ -37,7 +37,9 @@ int main(void){
     // Get line sensor reflectances
     getLineData(&points,&profile);
 
-    setMotors(IRpidControl(&time,&points),1,&profile);
+    float temp = IRpidControl(&time,&points);
+    echofloat(temp);
+    setMotors(temp,1,&profile);
     // Computations
     //cartesian(&points);
     //indexObstacles(&points);
@@ -51,7 +53,7 @@ int main(void){
     ledColorError(&points);
 
     // Delay for 1 second
-    LoopDelay(1);
+    //LoopDelay(1);
   }
   
   return 0;

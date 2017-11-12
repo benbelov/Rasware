@@ -95,7 +95,7 @@ float IRpidControl(timeTracker * tracker, pointSet * points)
 {
   float kp = 1;
   float ki = 0.5;
-  float kd = 0.1;
+  float kd = 1000;
 
   int line01 = 0;
 
@@ -107,10 +107,9 @@ float IRpidControl(timeTracker * tracker, pointSet * points)
   long nowTime = (long) GetTimeUS();
   long dTime = nowTime - tracker->lastTime;
   float error = 0;
-
-  for(int sensor = 0; sensor < 5; sensor ++)
+  for(int sensor=0; sensor<5; sensor++)
   {
-    if((points->line)[sensor-1] == '1')
+    if((points->line)[sensor] == '1')
     {
       error += (sensor-2)/5.0;
       line01 = 1;
@@ -121,8 +120,8 @@ float IRpidControl(timeTracker * tracker, pointSet * points)
 
   float dErr = (error - points->lastErr) / dTime;
 
-  float out = kp * error + ki * points->irErrInt + kd * dErr;
-
+  float out = kp * error;// + kd * dErr; //+ ki * points->irErrInt
+  
   if(line01 == 0)
   {
     if(points->lastErr < 0)

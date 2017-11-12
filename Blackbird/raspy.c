@@ -124,7 +124,6 @@ void printToPySerial(pointSet * points,HWProfile * profile,timeTracker * time) {
   for(int i=0; i<5; i++) {
     echofloat(points->reflectances[i]);
   }
-  
   clrscrn();
 
   drawbuffer();

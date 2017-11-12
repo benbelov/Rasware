@@ -8,8 +8,8 @@ void setMotors(float pidCoefficient,float sensitivity, HWProfile * profile)
 	float left;
 	float right;
 
-	left = 0.5 - pidCoefficient/2;
-	right = 0.5 + pidCoefficient/2;
+	left = 0.2 - pidCoefficient/4;
+	right = 0.2 + pidCoefficient/4;
 
 	SetMotor(profile->left, left);
 	SetMotor(profile->right, right);
