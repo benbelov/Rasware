@@ -118,17 +118,26 @@ class tm4c_launchpad:
                 
             # integer type
             if(argument_type == "d"):
-                arguments.append(int(raw_arguments[n]))
+                try:
+                    arguments.append(int(raw_arguments[n]))
+                except:
+                    arguments.append(0)
             # string type
             elif(argument_type == "s"):
                 arguments.append(raw_arguments[n])
             # float type
             elif(argument_type == "f"):
-                arguments.append(float(raw_arguments[n]))
+                try:
+                    arguments.append(float(raw_arguments[n]))
+                except:
+                    arguments.append(0)
             # long type
             elif(argument_type == "l"):
-                arguments.append(int(raw_arguments[n])*1000 +
-                                 int(raw_arguments[n+1]))
+                try:
+                    arguments.append(int(raw_arguments[n])*1000 +
+                                     int(raw_arguments[n+1]))
+                except:
+                    arguments.append(0)
             # empty type, for when one arg takes up two spaces
             elif(argument_type == "_"):
                 arguments.append(0)
