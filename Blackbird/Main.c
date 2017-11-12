@@ -23,6 +23,7 @@ int main(void){
   timeTracker time;
   time.iteration = 0;
   time.lastTime = 0;
+  time.FPS_pointer = 0;
   
   Printf("Hello World\n\n");
 
@@ -32,17 +33,14 @@ int main(void){
   while(true) {
 
     // Get ultrasonic sensor distances
-    //getDistance(&points,&profile,&time);
+    getDistance(&points,&profile,&time);
 
     // Get line sensor reflectances
     getLineData(&points,&profile);
 
-    float temp = IRpidControl(&time,&points);
-    echofloat(temp);
-    setMotors(temp,1,&profile);
     // Computations
-    //cartesian(&points);
-    //indexObstacles(&points);
+    cartesian(&points);
+    indexObstacles(&points);
 
     // Update tracker
     updateTimeTracker(&time);

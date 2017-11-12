@@ -46,9 +46,11 @@ class tm4c_launchpad:
             # float x, float y, float r, str color
             "drawcircle":["f","f","f","s"],
             # float x, float y, str label, str color
-            "text":["f","f","d","s","s"],
+            "text":["f","f","s","s"],
             # str message
             "echo":["s"],
+            # float message with multiple parts
+            "echol":["l","_"],
             # clear screen
             "clrscrn":[],
             # start drawing
@@ -125,8 +127,8 @@ class tm4c_launchpad:
                 arguments.append(float(raw_arguments[n]))
             # long type
             elif(argument_type == "l"):
-                arguments.append(int(raw_arguments[n]*10000 +
-                                   raw_arguments[n+1]))
+                arguments.append(int(raw_arguments[n])*1000 +
+                                 int(raw_arguments[n+1]))
             # empty type, for when one arg takes up two spaces
             elif(argument_type == "_"):
                 arguments.append(0)
@@ -236,6 +238,10 @@ class tm4c_launchpad:
 
             # echo: str message
             elif(instruction[0] == "echo"):
+                print(instruction[1])
+
+            # echof: message with two parts
+            elif(instruction[0] == "echol"):
                 print(instruction[1])
                 
             # clrscrn

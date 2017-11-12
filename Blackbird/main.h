@@ -62,6 +62,9 @@ struct timeTracker {
   int iteration;
   long execution_time;
   long lastTime;
+  float FPS[20];
+  int FPS_pointer;
+  float avgFPS;
 };
    
 // display.c
@@ -81,9 +84,11 @@ void setscale(float scale);
 void drawline(float x_1,float y_1,float x_2,float y_2,char * color);
 void setoffset(int x, int y);
 void text(float x, float y, char * label, char * color);
-void textnum(float x, float y, int label, char * color);
+void numtext(float x, float y, int label, char * color);
+void floattext(float x, float y, float label, char * color);
 void echo(char * message);
 void echofloat(float message);
+void echolong(long message);
 void clrscrn();
 void startraspy();
 void stopraspy();

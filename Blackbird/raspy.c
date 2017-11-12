@@ -26,11 +26,17 @@ void text(float x, float y, char * label, char * color) {
 void numtext(float x, float y, int label, char * color) {
   Printf("text:%f,%f,%d,%s\n",x,y,label,color);
 }
+void floattext(float x, float y, float label, char * color) {
+  Printf("text:%f,%f,%f,%s\n",x,y,label,color);
+}
 void echo(char * message) {
   Printf("echo:%s\n",message);
 }
 void echofloat(float message) {
   Printf("echo:%f\n",message);
+}
+void echolong(long message) {
+  Printf("echol:%d,%d\n",message/10000, message%10000);
 }
 void clrscrn() {
   Printf("clrscrn\n");
@@ -50,7 +56,7 @@ void initializeRasPy() {
   startraspy();
   clrscrn();
   setoffset(400,100);
-  setscale(5);
+  setscale(10);
   definecolor("red",1,0,0);
   definecolor("green",0,1,0);
   definecolor("blue",0,0,1);
@@ -65,6 +71,8 @@ void initializeRasPy() {
 // Format: struct:var,var... \n struct:var,var; ... \n ...
 void printToPySerial(pointSet * points,HWProfile * profile,timeTracker * time) {
 
+  clrscrn();
+  
   for (int i=0; i<9; i++) {
     if(points->obstacleIndex[i] == -1) {
       drawline(0,0,points->x[i],points->y[i],"red");
@@ -91,40 +99,28 @@ void printToPySerial(pointSet * points,HWProfile * profile,timeTracker * time) {
 		 points->x[i+1],points->y[i+1],"green");
       }
     }
-    else {   
-      if(points->obstacleIndex[i] == 0) {
-	drawcircle(points->x[i],points->y[i],2,"black");
-      }
-      else if(points->obstacleIndex[i] == 1) {
-	drawcircle(points->x[i],points->y[i],2,"blue");
-      }
-      else if(points->obstacleIndex[i] == 2) {
-	drawcircle(points->x[i],points->y[i],2,"purple");
-      }
-      else if(points->obstacleIndex[i] == 3) {
-	drawcircle(points->x[i],points->y[i],2,"orange");
-      }
-      else if(points->obstacleIndex[i] == 4) {
-	drawcircle(points->x[i],points->y[i],2,"green");
-      }
-      else {
-	drawcircle(points->x[i],points->y[i],2,"black");
-      }
+
+    if(points->obstacleIndex[i] == 1) {
+      drawcircle(points->x[i],points->y[i],2,"blue");
+    }
+    else if(points->obstacleIndex[i] == 2) {
+      drawcircle(points->x[i],points->y[i],2,"purple");
+    }
+    else if(points->obstacleIndex[i] == 3) {
+      drawcircle(points->x[i],points->y[i],2,"orange");
+    }
+    else if(points->obstacleIndex[i] == 4) {
+      drawcircle(points->x[i],points->y[i],2,"green");
+    }
+    else if(points->obstacleIndex[i] != 0) {
+      drawcircle(points->x[i],points->y[i],2,"black");
     }
 
     numtext(points->x[i],points->y[i],points->obstacleIndex[i],"black");
   }
 
-  char line_array_str[16];
-  for(int i=0; i<5; i++) {
-    line_array_str[2*i] = ' ';
-    line_array_str[2*i+1] = (points->line)[i];
-  }
-  echo(line_array_str);
-  for(int i=0; i<5; i++) {
-    echofloat(points->reflectances[i]);
-  }
-  clrscrn();
-
+  floattext(-35,-7.5,time->avgFPS,"black");
+  
   drawbuffer();
+  
 }

@@ -60,26 +60,16 @@ void indexObstacles (pointSet * points) {
 	(points->obstacleIndex)[n] = -1;
       }
 
-      // if two blocks are next to each other,
-      // and happen to form a convex angle relative to the robot
-      else if (isConvex((points->x)[n-1],(points->y)[n-1],
-			(points->x)[n],(points->y)[n],
-			(points->x)[n+1],(points->y)[n+1]) == 1 ) {
-	(points->obstacleIndex)[n] = obstacleNumber;
-	obstacleNumber += 1;
-      }
-
       // if two blocks are next each other,
-      // form a concave angle,
-      // but take up more than four inches worth of width
+      // but are further than 6" apart
 
       // see if the distance between the obstacle start
       // and current is greater than 4
-      else if(pow((points->x)[findFirstObstacle(points,n)] -
+      else if(pow((points->x)[n-1] -
 		  (points->x)[n],2) +
-	      pow((points->y)[findFirstObstacle(points,n)] -
+	      pow((points->y)[n-1] -
 		  (points->y)[n],2)
-	      > 4) {
+	      > 25) {
 	(points->obstacleIndex)[n] = obstacleNumber;
 	obstacleNumber += 1;
       }

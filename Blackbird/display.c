@@ -38,7 +38,15 @@ void PrintOutLine(pointSet * points) {
 // Updates the timeTracker
 void updateTimeTracker(timeTracker * tracker) {
   tracker->iteration += 1;
-
+  (tracker->FPS)[tracker->FPS_pointer] = (float) 50000/(tracker->execution_time);
+  tracker->FPS_pointer += 1;
+  if(tracker->FPS_pointer >= 20) {
+    tracker->FPS_pointer = 0;
+  }
+  tracker->avgFPS = 0;
+  for(int i=0; i<20; i++) {
+    tracker->avgFPS += (tracker->FPS)[i];
+  }
 }
 
 // Print out timeTracker
