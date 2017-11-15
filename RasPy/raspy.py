@@ -1,5 +1,6 @@
 from livewires import *
 import serial
+import math
 
 # the class where it all happens.
 # add commands by adding the appropriate profile to launchpad.commands,
@@ -41,10 +42,12 @@ class tm4c_launchpad:
             "setscale":["f"],
             # int xoffset, in yoffset
             "setoffset":["d","d"],
-            # float x_1, float y_1, float x_1, float y_1, str color
+            # float x_1, float y_1, float x_2, float y_2, str color
             "drawline":["f","f","f","f","s"],
             # float x, float y, float r, str color
             "drawcircle":["f","f","f","s"],
+            # float x, float y, float r, float theta, str color
+            "drawray":["f","f","f","f","s"],
             # float x, float y, str label, str color
             "text":["f","f","s","s"],
             # str message
@@ -206,7 +209,7 @@ class tm4c_launchpad:
             
             # drawline: float x_1, float y_1,
             #           float x_1, float y_1, str color
-            elif(instruction[0] == "drawline"):
+            elif(instruction[0] == "drawarrow"):
                 try:
                     colortuple = self.colors[instruction[5]]
                 except:
@@ -218,7 +221,7 @@ class tm4c_launchpad:
                      self.scale*instruction[2] + self.y_offset,
                      self.scale*instruction[3] + self.x_offset,
                      self.scale*instruction[4] + self.y_offset)
-
+                
             # drawcircle: float x, float y, float r, str color
             elif(instruction[0] == "drawcircle"):
                 try:
@@ -232,6 +235,22 @@ class tm4c_launchpad:
                        self.scale*instruction[2] + self.y_offset,
                        self.scale*instruction[3])
 
+            # drawray: float x, float y, float r, float theta, str color
+            elif(instruction[0] == "drawray"):
+                try:
+                    colortuple = self.colors[instruction[5]]
+                except:
+                    colortuple = self.colors["black"]
+                set_colour(Colour(colortuple[0],
+                                  colortuple[1],
+                                  colortuple[2]))
+                line(self.scale*instruction[1] + self.x_offset,
+                     self.scale*instruction[2] + self.y_offset,
+                     self.scale*instruction[3]*
+                     math.cos(math.pi*instruction[4]/180) + self.x_offset,
+                     self.scale*instruction[3]*
+                     math.sin(math.pi*instruction[4]/180) + self.y_offset)
+                
             # text: float x, float y, str label, str color
             elif(instruction[0] == "text"):
                 try:
