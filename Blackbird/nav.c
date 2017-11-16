@@ -89,41 +89,41 @@ void findValidTargets(pointSet * points) {
     
   for (int i=9; i>0; i--) {
     
-    float cleared_sector[2];
+    float left_bound;
+    float right_bound;
+    float target_vector;
+    float vector_distance;
     int isValid = 0;
     
-    float central_angle;
-
     // If the point we're looking at is the end of the wall:
     if (points->obstacleIndex[i] == 0 &&
         points->obstacleIndex[i-1] != 0) {
-      cleared_sector[0] = 20*i;
-      cleared_sector[1] = 20*i - 114.6*asinf(7.62/points->r[i]);
-      central_angle = (cleared_sector[0] + cleared_sector[1])/2;
-      isValid = 1;
+      left_bound = i*PI/9;
+      target_vector = left_bound - asinf(3/points->r[i]);
+      vector_distance = 3/tanf(left_bound - target_vector);
+      right_bound = target_vector - atanf(6/vector_distance);
     }
 
     
     // Else, if the point we're looking at is a block:
     else if (points->obstacleIndex[i] != 0 &&
     	     points->obstacleIndex[i] != -1) {
-      central_angle = 20*i - 57.3*asinf(15.24/points->r[i]);
-      float central_distance = 6/tanf(0.01745*(20*i-central_angle));
-      cleared_sector[0] = central_angle + 57.3*atanf(7.62/central_distance);
-      cleared_sector[1] = central_angle - 57.3*atanf(7.62/central_distance);
-      isValid = 1;
+      left_bound = i*PI/9;
+      right_bound = i*PI/9 - 2*asinf(6/points->r[i]);
+      target_vector = (left_bound + right_bound)/2;
+      vector_distance = pow(pow(points->r[i],2) - 36, 1/2);
     }
 
     int j = 9;
     while (j>0 && isValid == 1) {
 
       // If a block is in the cleared sector, and it is within 10":
-      if (cleared_sector[0] > 20*j && 20*j > cleared_sector[1]
+      if (left_bound > 20*j && 20*j > right_bound
 	  &&
 	  pow(points->x[i] - points->x[j],2) +
 	  pow(points->y[i] - points->y[j],2) < 64
 	  &&
-	  points->obstacleIndex != -1) {
+	  points->obstacleIndex[i] != -1) {
 
 	  isValid = 0;
       }
@@ -132,7 +132,8 @@ void findValidTargets(pointSet * points) {
     
     // If the path has survived all the tests
     if (isValid == 1) {
-      points->validVectors[(points->vectorCount)-1] = central_angle;
+      points->validVectors[(points->vectorCount)-1] = target_vector;
+      points->validVectorLengths[(points->vectorCount)-1] = vector_distance;
       points->vectorCount += 1;
     }
     

@@ -126,7 +126,7 @@ void printToPySerial(pointSet * points,HWProfile * profile,timeTracker * time) {
 
   // Draw possible target vectors
   for(int i=0; i<(points->vectorCount); i++) {
-    drawray(0,0,100,points->validVectors[i],"blue");
+    drawray(0,0,points->validVectorLengths[i],points->validVectors[i],"blue");
   }
 
   // draw the buffer

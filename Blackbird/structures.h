@@ -28,6 +28,7 @@ struct pointSet {
   int obstacleIndex[10];
   // valid path vectors
   float validVectors[10];
+  float validVectorLengths[10];
   int vectorCount;
   // 0 = display heartBeat; 1 = display errorCode; 2 = display executionMode
   int currentStatusCode;
