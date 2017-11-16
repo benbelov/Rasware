@@ -20,6 +20,9 @@ int findFirstObstacle(pointSet * points, int obstacle);
 // 1,2,... = obstacles, numbered
 void indexObstacles(pointSet * points);
 
+// Finds valid target vectors
+void findValidTargets(pointSet * points);
+
 // Not yet implemented
 float chooseTarget(pointSet * points);
 

@@ -209,7 +209,7 @@ class tm4c_launchpad:
             
             # drawline: float x_1, float y_1,
             #           float x_1, float y_1, str color
-            elif(instruction[0] == "drawarrow"):
+            elif(instruction[0] == "drawline"):
                 try:
                     colortuple = self.colors[instruction[5]]
                 except:

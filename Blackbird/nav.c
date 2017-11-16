@@ -81,6 +81,70 @@ void indexObstacles (pointSet * points) {
   }
 }
 
+// Finds valid target vectors
+void findValidTargets(pointSet * points) {
+
+  // Reset the total vector counter
+  points->vectorCount = 1;
+    
+  for (int i=9; i--; i>0) {
+    
+    float cleared_sector[2];
+    int isValid = 0;
+    
+    float central_angle;
+
+    // If the point we're looking at is the end of the wall:
+    if (points->obstacleIndex[i] == 0 &&
+        points->obstacleIndex[i-1] != 0) {
+      cleared_sector[0] = 20*i;
+      cleared_sector[1] = 20*i - 2*asinf(5/points->r[i]);
+      central_angle = (cleared_sector[0] + cleared_sector[1])/2;
+      isValid = 1;
+    }
+
+    // Else, if the point we're looking at is a block:
+    else if (points->obstacleIndex[i] != 0 &&
+	     points->obstacleIndex[i] != -1) {
+      central_angle = 20*i - asinf(8/points->r[i]);
+      float central_distance = 8/tanf(central_angle);
+      cleared_sector[0] = central_angle + atanf(5/central_distance);
+      cleared_sector[1] = central_angle - atanf(5/central_distance);
+      isValid = 1;
+
+    }
+
+    int j = 0;
+    while (j>0 && isValid == 1) {
+
+      // If a block is in the cleared sector, and it is within 10":
+      if (cleared_sector[0] > 20*j && 20*j > cleared_sector[1]
+	  &&
+	  pow(points->x[i] - points->x[j],2) +
+	  pow(points->y[i] - points->y[j],2) < 100) {
+
+	  isValid = 0;
+      }
+      j += 1;
+    }
+
+    // If the path has survived all the tests
+    if (isValid == 1) {
+      points->validVectors[(points->vectorCount)-1] = central_angle;
+      points->vectorCount += 1;
+    }
+    
+  }
+  
+}
+
+// Not yet implemented
+float chooseTarget(pointSet * points) {
+
+  
+  
+}
+
 // Takes IR array output and applies PID control
 // I and D terms currently disabled
 float IRpidControl(timeTracker * tracker, pointSet * points)

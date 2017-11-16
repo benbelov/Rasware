@@ -41,6 +41,8 @@ int main(void){
     // Computations
     cartesian(&points);
     indexObstacles(&points);
+    findValidTargets(&points);
+    
 
     // Update tracker
     updateTimeTracker(&time);

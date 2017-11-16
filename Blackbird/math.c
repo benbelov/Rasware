@@ -57,7 +57,6 @@ float fastInverseTangent(float x) {
   return 57.2957*(0.785398*x - x*(fabs(x) - 1)*(0.2447 + 0.0663*fabs(x)));
 }
 
-
 // compute x and y from r in a pointSet struct
 // uses sin and cosine tables
 // modifies the pointSet struct directly
