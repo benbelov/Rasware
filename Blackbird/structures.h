@@ -52,6 +52,7 @@ struct HWProfile {
   tServo *small;
   tADC *linesensor[5];
   float threshhold;
+  int previousButtonState;
 };
 
 // definition of the main diagnostic structure

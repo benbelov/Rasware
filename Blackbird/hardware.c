@@ -12,7 +12,6 @@ void initHardware(HWProfile * profile) {
   // Initialize GPIO
   InitializeGPIO();
 
-  
   // Distance sensor constants
   tPin trigger_pins_temp[5] = {PIN_D0,PIN_D1,PIN_D2,PIN_D3,PIN_E1};
   for(int i=0;i<5;i++) {
@@ -35,4 +34,28 @@ void initHardware(HWProfile * profile) {
   profile->right = InitializeServoMotor(PIN_B7,true);
   profile->small = InitializeServo(PIN_B6);
 
+  // Start the button state at 0.
+  profile->previousButtonState = 0;
+
+}
+
+
+// Toggles between UART and PySerial
+void toggle(void){
+
+  // Each time the button is pressed, increment executionMode by 1.
+
+  if (profile->previousButtonState == 0 && GetPin(PIN_F4){
+
+    points->executionMode += 1;
+    points->executionMode %= 2;
+    profile->previousButtonState = 1;
+
+  }
+
+  else {
+
+    profile->previousButtonState = 0;
+ 
+  }
 }
