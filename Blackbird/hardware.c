@@ -40,22 +40,16 @@ void initHardware(HWProfile * profile) {
 }
 
 
-// Toggles between UART and PySerial
-void toggle(void){
+// If the button is pressed, cycle through execution modes.
+void checkModeChange(HWProfile * profile, pointSet * points){
 
-  // Each time the button is pressed, increment executionMode by 1.
-
-  if (profile->previousButtonState == 0 && GetPin(PIN_F4){
-
+  if (profile->previousButtonState == 0 && GetPin(PIN_F4)) {
     points->executionMode += 1;
     points->executionMode %= 2;
     profile->previousButtonState = 1;
-
   }
 
   else {
-
     profile->previousButtonState = 0;
- 
   }
 }

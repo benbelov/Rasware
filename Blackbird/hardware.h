@@ -15,4 +15,7 @@
 // initializes hardware profile and sets values
 void initHardware(HWProfile * profile);
 
+// checks if the button is pressed
+void checkModeChange(HWProfile * profile, pointSet * points);
+
 #endif

@@ -87,7 +87,7 @@ void findValidTargets(pointSet * points) {
   // Reset the total vector counter
   points->vectorCount = 1;
     
-  for (int i=9; i--; i>0) {
+  for (int i=9; i>0; i--) {
     
     float cleared_sector[2];
     int isValid = 0;
@@ -98,36 +98,38 @@ void findValidTargets(pointSet * points) {
     if (points->obstacleIndex[i] == 0 &&
         points->obstacleIndex[i-1] != 0) {
       cleared_sector[0] = 20*i;
-      cleared_sector[1] = 20*i - 2*asinf(5/points->r[i]);
+      cleared_sector[1] = 20*i - 114.6*asinf(7.62/points->r[i]);
       central_angle = (cleared_sector[0] + cleared_sector[1])/2;
       isValid = 1;
     }
 
+    
     // Else, if the point we're looking at is a block:
     else if (points->obstacleIndex[i] != 0 &&
-	     points->obstacleIndex[i] != -1) {
-      central_angle = 20*i - asinf(8/points->r[i]);
-      float central_distance = 8/tanf(central_angle);
-      cleared_sector[0] = central_angle + atanf(5/central_distance);
-      cleared_sector[1] = central_angle - atanf(5/central_distance);
+    	     points->obstacleIndex[i] != -1) {
+      central_angle = 20*i - 57.3*asinf(15.24/points->r[i]);
+      float central_distance = 6/tanf(0.01745*(20*i-central_angle));
+      cleared_sector[0] = central_angle + 57.3*atanf(7.62/central_distance);
+      cleared_sector[1] = central_angle - 57.3*atanf(7.62/central_distance);
       isValid = 1;
-
     }
 
-    int j = 0;
+    int j = 9;
     while (j>0 && isValid == 1) {
 
       // If a block is in the cleared sector, and it is within 10":
       if (cleared_sector[0] > 20*j && 20*j > cleared_sector[1]
 	  &&
 	  pow(points->x[i] - points->x[j],2) +
-	  pow(points->y[i] - points->y[j],2) < 100) {
+	  pow(points->y[i] - points->y[j],2) < 64
+	  &&
+	  points->obstacleIndex != -1) {
 
 	  isValid = 0;
       }
-      j += 1;
+      j -= 1;
     }
-
+    
     // If the path has survived all the tests
     if (isValid == 1) {
       points->validVectors[(points->vectorCount)-1] = central_angle;

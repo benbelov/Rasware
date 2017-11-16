@@ -148,7 +148,8 @@ void printOutInfo (pointSet * points,HWProfile * profile,timeTracker * time) {
     PrintOutLine(points);
   }
   
-  else if (points->executionMode == 1) {
+  //else if (points->executionMode == 1) {
+  else {
     printToPySerial(points,profile,time);
   }
 }
