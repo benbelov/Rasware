@@ -8,15 +8,15 @@ void setMotors(float pidCoefficient,HWProfile * profile) {
 	float defaultPower = 0.5;
 	float pidScale = 1.0;
 
-  float left = linearizeMotors(defaultPower - pidScale*pidCoefficient)[0];
-  float right = linearizeMotors(defaultPower + pidScale*pidCoefficient)[1];
+  float left = linearizeMotors(defaultPower - pidScale*pidCoefficient);
+  float right = linearizeMotors(defaultPower + pidScale*pidCoefficient);
 
   SetMotor(profile->left, left);
   SetMotor(profile->right, right);
 }
 
 // Linearize motor profile
-float * linearizeMotors(float pidCoefficient) {
+float linearizeMotors(float pidCoefficient) {
 
 /*
 
@@ -64,8 +64,10 @@ float * linearizeMotors(float pidCoefficient) {
 
 			}
 
+
 		}
 
 	}
+	return 0;
 
 }
