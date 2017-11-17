@@ -1,0 +1,24 @@
+added pid control coeff to setmotor
+
+# --------------
+# Please enter the commit message for your changes. Everything below
+# this paragraph is ignored, and an empty message aborts the commit.
+# Just close the window to accept your message.
+diff --git a/Blackbird/control.c b/Blackbird/control.c
+index 984a70f..2de9ffb 100644
+--- a/Blackbird/control.c
++++ b/Blackbird/control.c
+@@ -5,9 +5,11 @@
+ 
+ // Sets motor speeds based on an input pidCoefficient and sensitivity
+ void setMotors(float pidCoefficient,HWProfile * profile) {
++	float defaultPower = 0.5;
++	float pidScale = 1.0;
+ 
+-  float left = linearizeMotors(pidCoefficient)[0];
+-  float right = linearizeMotors(pidCoefficient)[1];
++  float left = linearizeMotors(defaultPower - pidScale*pidCoefficient)[0];
++  float right = linearizeMotors(defaultPower + pidScale*pidCoefficient)[1];
+ 
+   SetMotor(profile->left, left);
+   SetMotor(profile->right, right);
