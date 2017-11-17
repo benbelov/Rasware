@@ -6,6 +6,7 @@
 
 #include "structures.h"
 #include "math.h"
+#include "raspy.h"
 
 // nav.h in /Blackbird
 // header file for navigation subroutines
@@ -20,14 +21,20 @@ int findFirstObstacle(pointSet * points, int obstacle);
 // 1,2,... = obstacles, numbered
 void indexObstacles(pointSet * points);
 
+// Applies filters to distance sensor raw output
+void filterDistances(pointSet * points);
+
 // Finds valid target vectors
 void findValidTargets(pointSet * points);
 
 // Not yet implemented
 float chooseTarget(pointSet * points);
 
+// Not yet implemented
+void initpidProfile(pidProfile * pidprofile);
+
 // Not yet impelmented
-float pidControl(float target, float * targetHistory); // not done
+float pidControl(float target, pidProfile * pidprofile); // not done
 
 // Takes IR array output and applies PID control
 // I and D terms currently disabled

@@ -68,4 +68,12 @@ struct timeTracker {
   float avgFPS;
 };
 
+// Stores information for the PID profile
+typedef struct pidProfile pidProfile;
+struct pidProfile {
+  long previousTime;
+  float dpreviousCorrection;
+  float k_p;
+  float k_d;
+}
 #endif

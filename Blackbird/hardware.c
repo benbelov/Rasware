@@ -19,7 +19,7 @@ void initHardware(HWProfile * profile) {
   profile->echo_1 = PIN_E2;
   }
   profile->echo_2 = PIN_E3;
-  profile->timeout_us = 15000;
+  profile->timeout_us = 30000;
 
   // IR sensor constants
   (profile->linesensor)[0] = InitializeADC(PIN_B5);

@@ -59,7 +59,7 @@ void initializeRasPy() {
   startraspy();
   clrscrn();
   setoffset(400,100);
-  setscale(10);
+  setscale(5);
   definecolor("red",1,0,0);
   definecolor("green",0,1,0);
   definecolor("blue",0,0,1);
@@ -128,7 +128,6 @@ void printToPySerial(pointSet * points,HWProfile * profile,timeTracker * time) {
   for(int i=0; i<(points->vectorCount); i++) {
     drawray(0,0,points->validVectorLengths[i],points->validVectors[i],"blue");
   }
-
   // draw the buffer
   drawbuffer();
   

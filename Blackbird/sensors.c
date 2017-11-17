@@ -104,9 +104,10 @@ long getDistance(pointSet * points, HWProfile * profile, timeTracker * tracker){
 	break;
       }
 
-      if( end_time_1 != 0 && end_time_2 != 0) {
-      	break;
-      }
+      // Both pings received
+      /* if( end_time_1 != 0 && end_time_2 != 0) { */
+      /* 	break; */
+      /* } */
 
 
       // Sets start times and end times when appropriate

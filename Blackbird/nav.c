@@ -81,11 +81,20 @@ void indexObstacles (pointSet * points) {
   }
 }
 
+// Applies filter to raw outputs
+void filterDistances(pointSet * points) {
+  for (int i=0; i<10; i++) {
+    if(points->r[i] > 100) {
+      points->r[i] = 17000;
+    }
+  }
+}
+
 // Finds valid target vectors
 void findValidTargets(pointSet * points) {
 
   // Reset the total vector counter
-  points->vectorCount = 1;
+  points->vectorCount = 0;
     
   for (int i=9; i>0; i--) {
     
@@ -99,9 +108,10 @@ void findValidTargets(pointSet * points) {
     if (points->obstacleIndex[i] == 0 &&
         points->obstacleIndex[i-1] != 0) {
       left_bound = i*PI/9;
-      target_vector = left_bound - asinf(3/points->r[i]);
-      vector_distance = 3/tanf(left_bound - target_vector);
-      right_bound = target_vector - atanf(6/vector_distance);
+      target_vector = left_bound - asinf(7.62/points->r[i]);
+      vector_distance = 7.62/tanf(left_bound - target_vector);
+      right_bound = target_vector - atanf(15.24/vector_distance);
+      isValid = 1;
     }
 
     
@@ -109,22 +119,21 @@ void findValidTargets(pointSet * points) {
     else if (points->obstacleIndex[i] != 0 &&
     	     points->obstacleIndex[i] != -1) {
       left_bound = i*PI/9;
-      right_bound = i*PI/9 - 2*asinf(6/points->r[i]);
+      right_bound = i*PI/9 - 2*asinf(15.24/points->r[i]);
       target_vector = (left_bound + right_bound)/2;
-      vector_distance = pow(pow(points->r[i],2) - 36, 1/2);
+      vector_distance = pow(pow(points->r[i],2) - 214.33, 1/2);
+      isValid = 1;
     }
-
-    int j = 9;
+    
+    int j = i - 1;
     while (j>0 && isValid == 1) {
 
-      // If a block is in the cleared sector, and it is within 10":
-      if (left_bound > 20*j && 20*j > right_bound
+      // If a block is in the cleared sector, and it is within 8":
+      if (left_bound > PI*j/9 && PI*j/9 > right_bound
 	  &&
-	  pow(points->x[i] - points->x[j],2) +
-	  pow(points->y[i] - points->y[j],2) < 64
+	  points->r[j] < points->r[i] + 20.32
 	  &&
 	  points->obstacleIndex[i] != -1) {
-
 	  isValid = 0;
       }
       j -= 1;
@@ -132,9 +141,9 @@ void findValidTargets(pointSet * points) {
     
     // If the path has survived all the tests
     if (isValid == 1) {
+      points->vectorCount += 1;
       points->validVectors[(points->vectorCount)-1] = target_vector;
       points->validVectorLengths[(points->vectorCount)-1] = vector_distance;
-      points->vectorCount += 1;
     }
     
   }
@@ -144,8 +153,53 @@ void findValidTargets(pointSet * points) {
 // Not yet implemented
 float chooseTarget(pointSet * points) {
 
+  float targetVector;
   
+  if(points->vectorCount == 0) {
+    targetVector = PI/2;
+  }
+
+  else if(points->vectorCount >= 1) {
+    targetVector = points->validVectors[0];
+  }
+  return(targetVector);
+}
+
+// Initialize values for pid control
+float initpidProfile(pidProfile * pidprofile) {
+
+  // PID coefficients
+  pidprofile->k_p = 1;
+  pidprofile->k_d = 1000;
+
+  // Initialize the time tracker for pid
+  pidprofile->previousTime = GetTimeUS();
   
+}
+
+// Takes target vector and applies PID control
+// output is a correction vector between -1 and 1
+float pidControl(float target, pidProfile * pidprofile) {
+
+  // Compute change in time, currently unused
+  long dTime = GetTimeUS() - pidprofile->previousTime;
+  
+  // Compute the error to the given target
+  float error = target - PI/2;
+
+  // PID formula for the correction
+  float correction = (previousCorrection +
+		      pidprofile->k_p * error +
+		      pidprofile->k_d * dpreviousCorrection);
+
+  // Update the correction
+  pidprofile->previousCorrection = correction;
+
+  // Update the derivative of the correction
+  pidprofile->dpreviousCorrection = (profile->dpreviousCorrection +
+				     correction - previousCorrection)/2;
+
+  return(correction);
 }
 
 // Takes IR array output and applies PID control
