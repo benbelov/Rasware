@@ -6,8 +6,8 @@
 // Sets motor speeds based on an input pidCoefficient and sensitivity
 void setMotors(float pidCoefficient,HWProfile * profile) {
 
-  left = linearizeMotors(pidCoefficient)[0];
-  right = linearizeMotors(pidCoefficient)[1];
+  float left = linearizeMotors(pidCoefficient)[0];
+  float right = linearizeMotors(pidCoefficient)[1];
 
   SetMotor(profile->left, left);
   SetMotor(profile->right, right);

@@ -13,6 +13,6 @@
 void setMotors(float pidCoefficient,HWProfile * profile);
 
 // Linearizes the motor profile
-void linearizeMotors(float pidCoefficient);
+float * linearizeMotors(float pidCoefficient);
 
 #endif

@@ -166,7 +166,7 @@ float chooseTarget(pointSet * points) {
 }
 
 // Initialize values for pid control
-float initpidProfile(pidProfile * pidprofile) {
+void initpidProfile(pidProfile * pidprofile) {
 
   // PID coefficients
   pidprofile->k_p = 1;
@@ -188,16 +188,17 @@ float pidControl(float target, pidProfile * pidprofile) {
   float error = target - PI/2;
 
   // PID formula for the correction
-  float correction = (previousCorrection +
+  float correction = (pidprofile->previousCorrection +
 		      pidprofile->k_p * error +
-		      pidprofile->k_d * dpreviousCorrection);
+		      pidprofile->k_d * pidprofile->dpreviousCorrection);
 
   // Update the correction
   pidprofile->previousCorrection = correction;
 
   // Update the derivative of the correction
-  pidprofile->dpreviousCorrection = (profile->dpreviousCorrection +
-				     correction - previousCorrection)/2;
+  pidprofile->dpreviousCorrection = (pidprofile->dpreviousCorrection +
+				     correction -
+				     pidprofile->previousCorrection)/2;
 
   return(correction);
 }
@@ -222,7 +223,7 @@ float IRpidControl(timeTracker * tracker, pointSet * points)
   float error = 0;
   for(int sensor=0; sensor<5; sensor++)
   {
-    if((points->line)[sensor] `== '1')
+    if((points->line)[sensor] == '1')
     {
       error += (sensor-2)/5.0;
       line01 = 1;

@@ -72,8 +72,9 @@ struct timeTracker {
 typedef struct pidProfile pidProfile;
 struct pidProfile {
   long previousTime;
+  float previousCorrection;
   float dpreviousCorrection;
   float k_p;
   float k_d;
-}
+};
 #endif
