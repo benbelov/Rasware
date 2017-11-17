@@ -26,3 +26,6 @@ StellarisWare/
 *._ia
 .DS_Store
 *.swp
+*.pyc
+*.sublime-project
+*.sublime-workspace
