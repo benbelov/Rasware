@@ -207,8 +207,8 @@ float pidControl(float target, pidProfile * pidprofile) {
 float IRpidControl(timeTracker * tracker, pointSet * points)
 {
   float kp = 1;
-  float ki = 0.5;
-  float kd = 1000;
+  //float ki = 0.5;
+  //float kd = 1000;
 
   int line01 = 0;
 
@@ -222,7 +222,7 @@ float IRpidControl(timeTracker * tracker, pointSet * points)
   float error = 0;
   for(int sensor=0; sensor<5; sensor++)
   {
-    if((points->line)[sensor] == '1')
+    if((points->line)[sensor] `== '1')
     {
       error += (sensor-2)/5.0;
       line01 = 1;
@@ -231,7 +231,7 @@ float IRpidControl(timeTracker * tracker, pointSet * points)
 
   points->irErrInt += (error * dTime);
 
-  float dErr = (error - points->lastErr) / dTime;
+  //float dErr = (error - points->lastErr) / dTime;
 
   float out = kp * error;// + kd * dErr; //+ ki * points->irErrInt
   
