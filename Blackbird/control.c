@@ -54,7 +54,7 @@ float * linearizeMotors(float pidCoefficient) {
 				(((yValues[index] - yValues[index-1])/(xValues[index] - xValues[index-1]))*
 				(pidCoefficient - xValues[index-1]));
 
-				index = 8;
+				index = 8; //Break out of while loop instead of using break;
 
 			}else{
 
