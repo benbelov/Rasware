@@ -27,11 +27,15 @@ int main(void){
   
   Printf("Hello World\n\n");
 
+
   // Initialize python listener
   initializeRasPy();
   
   while(true) {
 
+    // User input
+    //checkModeChange(&profile,&points);
+    
     // Get ultrasonic sensor distances
     getDistance(&points,&profile,&time);
 
@@ -42,7 +46,6 @@ int main(void){
     cartesian(&points);
     indexObstacles(&points);
     findValidTargets(&points);
-    
 
     // Update tracker
     updateTimeTracker(&time);
@@ -53,7 +56,7 @@ int main(void){
     ledColorError(&points);
 
     // Delay for 1 second
-    //LoopDelay(1);
+    //LoopDelay(0.5);
   }
   
   return 0;

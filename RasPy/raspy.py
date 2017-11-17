@@ -246,10 +246,8 @@ class tm4c_launchpad:
                                   colortuple[2]))
                 line(self.scale*instruction[1] + self.x_offset,
                      self.scale*instruction[2] + self.y_offset,
-                     self.scale*instruction[3]*
-                     math.cos(math.pi*instruction[4]/180) + self.x_offset,
-                     self.scale*instruction[3]*
-                     math.sin(math.pi*instruction[4]/180) + self.y_offset)
+                     self.scale*instruction[3]*math.cos(instruction[4]) + self.x_offset,
+                     self.scale*instruction[3]*math.sin(instruction[4]) + self.y_offset)
                 
             # text: float x, float y, str label, str color
             elif(instruction[0] == "text"):

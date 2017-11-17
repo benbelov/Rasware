@@ -9,6 +9,8 @@
 
 #include "structures.h"
 
+#define PI 3.1415
+
 // checks if an angle <ABC between three cartesian coordinates is obtuse
 // returns 1 if obtuse, 0 if not obtuse
 int isObtuse(float a_x,float a_y,float b_x,float b_y,float c_x,float c_y);

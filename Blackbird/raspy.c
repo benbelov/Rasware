@@ -18,7 +18,7 @@ void drawline(float x_1,float y_1,float x_2,float y_2,char * color) {
   Printf("drawline:%f,%f,%f,%f,%s\n",x_1,y_1,x_2,y_2,color);
 }
 void drawray(float x_1,float y_1,float r,float theta,char * color) {
-  Printf("drawline:%f,%f,%f,%f,%s\n",x_1,y_1,r,theta,color);
+  Printf("drawray:%f,%f,%f,%f,%s\n",x_1,y_1,r,theta,color);
 }
 void drawcircle(float x, float y, float r, char * color) {
   Printf("drawcircle:%f,%f,%f,%s\n",x,y,r,color);
@@ -76,7 +76,7 @@ void printToPySerial(pointSet * points,HWProfile * profile,timeTracker * time) {
 
   clrscrn();
   
-  for (int i=0; i<9; i++) {
+  for (int i=1; i<9; i++) {
     if(points->obstacleIndex[i] == -1) {
       drawline(0,0,points->x[i],points->y[i],"red");
     }
@@ -125,8 +125,8 @@ void printToPySerial(pointSet * points,HWProfile * profile,timeTracker * time) {
   floattext(-35,-7.5,time->avgFPS,"black");
 
   // Draw possible target vectors
-  for(int i=0; i++; i<(points->vectorCount)) {
-    drawray(0,0,100,points->validVectors[i],"blue");
+  for(int i=0; i<(points->vectorCount); i++) {
+    drawray(0,0,points->validVectorLengths[i],points->validVectors[i],"blue");
   }
 
   // draw the buffer
