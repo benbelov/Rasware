@@ -14,7 +14,7 @@ int main(void){
   points.irErrInt = 0;
   points.lastErr = 0;
 
-  // Initializ HWProfile struct for storing hardware info
+  // Initialize HWProfile struct for storing hardware info
   // and set up motors and GPIO
   HWProfile profile;
   initHardware(&profile);
