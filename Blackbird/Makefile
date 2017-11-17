@@ -1,5 +1,5 @@
 # Makefile for RASWare 2013
-TARGET = RASTemplate.out
+TARGET = Blackbird.out
 
 # Library Locations
 RASLIB = ../RASLib
