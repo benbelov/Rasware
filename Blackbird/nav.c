@@ -82,7 +82,7 @@ void chooseTarget(pointSet * points, pidProfile * pid) {
   // as measured by sensors 9 and 8.
   float base_vector = atan((points->y[9] - points->y[8])/
 			  (points->x[9] - points->x[8]));
-  if(points->r[9] > 50) {
+  if(points->r[9] > 20) {
     base_vector = PI/2;
   }
   if(base_vector < 0) {
@@ -106,8 +106,8 @@ void chooseTarget(pointSet * points, pidProfile * pid) {
 
   int path_blocked = 0;
   for (int i=0; i<10; i++) {
-    float left_bound = left_bound_base + points->y[i] * tanf(base_vector);
-    float right_bound = right_bound_base + points->y[i] * tanf(base_vector);
+    float left_bound = left_bound_base + points->y[i] / tanf(base_vector);
+    float right_bound = right_bound_base + points->y[i] / tanf(base_vector);
     if (left_bound < points->x[i] &&
 	points->x[i] < right_bound &&
 	points->r[i] < 80) {
@@ -121,6 +121,7 @@ void chooseTarget(pointSet * points, pidProfile * pid) {
   if (path_blocked == 0) {
     pid->target_vector = base_vector;
     pid->wall_follow_correction = minimum_distance - desired_distance;
+    echo("path not blocked");
   }
 
   // Obstacles in the path within 50cm
@@ -170,9 +171,11 @@ void chooseTarget(pointSet * points, pidProfile * pid) {
 	pid->target_vector = target_vector;
 	if (minimum_distance - desired_distance > 0) {
 	  pid->wall_follow_correction = 0;
+    echo("valid target, ignoring k_i");
 	}
 	else {
 	  pid->wall_follow_correction = minimum_distance - desired_distance;
+    echo("valid target, k_i taken into consideration");
 	}
 	break;
       }
@@ -183,6 +186,7 @@ void chooseTarget(pointSet * points, pidProfile * pid) {
   if (pid->target_vector < PI/9) {
     pid->target_vector = base_vector;
     pid->wall_follow_correction = minimum_distance - desired_distance;
+    echo("no valid target, defaulting to wall follow");
   }
 
 }
@@ -193,8 +197,8 @@ void initpidProfile(pidProfile * pidprofile) {
 
   // PID coefficients
   pidprofile->k_p = 0.4;
-  pidprofile->k_d = 50000;
-  pidprofile->k_i = 0.02;
+  pidprofile->k_d = 200000;
+  pidprofile->k_i = 0.03;
 
   // Initialize the time tracker for pid
   pidprofile->previousTime = GetTimeUS();
@@ -212,19 +216,12 @@ float pidControl(pidProfile * pid) {
 		  pid->k_d * pid->dpreviousCorrection +
 		  pid->k_i * pid->wall_follow_correction);
 
-  echofloat(output);
-
   // Compute the time change
   float dTime = GetTimeUS() - pid->previousTime;
   // Update the previous time
   pid->previousTime = GetTimeUS();
   // Update the derivative
-  if (dTime == 0) {
-    pid->dpreviousCorrection = 0;
-  }
-  else {
-   pid->dpreviousCorrection = (output - pid->previousCorrection)/(dTime);
-  }
+  pid->dpreviousCorrection = ((output - pid->previousCorrection)/(dTime) + 3*pid->dpreviousCorrection)/4;
   // Update the previous correction
   pid->previousCorrection = output;
 
