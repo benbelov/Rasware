@@ -39,6 +39,6 @@ void ledColorError(pointSet * points);
 // Prints out info
 // if profile->mode = python-mode, print out to pyserial
 // if profile->mode = uart-mode, print out in a human-readable form
-void printOutInfo(pointSet * points, HWProfile * profile, timeTracker * time);
+void printOutInfo(pointSet * points, HWProfile * profile, timeTracker * time, pidProfile * pid);
 
 #endif

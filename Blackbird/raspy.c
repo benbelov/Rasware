@@ -72,7 +72,7 @@ void initializeRasPy() {
 // Prints out information in a machine readable format
 // Intended to pipe info to PySerial
 // Format: struct:var,var... \n struct:var,var; ... \n ...
-void printToPySerial(pointSet * points,HWProfile * profile,timeTracker * time) {
+void printToPySerial(pointSet * points,HWProfile * profile,timeTracker * time, pidProfile * pid) {
 
   clrscrn();
   
@@ -123,15 +123,9 @@ void printToPySerial(pointSet * points,HWProfile * profile,timeTracker * time) {
   }
 
   floattext(-35,-7.5,time->avgFPS,"black");
-
-  for(int i=0; i<10; i++) {
-    floattext(-60,10*i,points->r[i],"black");
-  }
   
-  // Draw possible target vectors
-  for(int i=0; i<(points->vectorCount); i++) {
-    drawray(0,0,points->validVectorLengths[i],points->validVectors[i],"blue");
-  }
+  drawray(0,0,100,pid->target_vector,"blue");
+	  
   // draw the buffer
   drawbuffer();
   

@@ -13,7 +13,7 @@
 // Prints out information in a machine readable format
 // Intended to pipe info to PySerial
 // Format: struct:var,var... \n struct:var,var; ... \n ...
-void printToPySerial(pointSet * points,HWProfile * profile,timeTracker * time);
+void printToPySerial(pointSet * points,HWProfile * profile,timeTracker * time, pidProfile * pid);
 
 // Set initial values for the RasPy script to use
 void initializeRasPy();

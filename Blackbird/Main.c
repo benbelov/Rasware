@@ -11,8 +11,6 @@ int main(void){
   pointSet points;
   points.currentStatusCode = 0;
   points.executionMode = 1;
-  points.irErrInt = 0;
-  points.lastErr = 0;
 
   // Initialize HWProfile struct for storing hardware info
   // and set up motors and GPIO
@@ -24,6 +22,10 @@ int main(void){
   time.iteration = 0;
   time.lastTime = 0;
   time.FPS_pointer = 0;
+
+  // Init the pidProfile struct
+  pidProfile pid;
+  initpidProfile(&pid);
   
   Printf("Hello World\n\n");
 
@@ -43,16 +45,15 @@ int main(void){
     getLineData(&points,&profile);
 
     // Computations
-    //filterDistances(&points);
     cartesian(&points);
     indexObstacles(&points);
-    findValidTargets(&points);
-
+    chooseTarget(&points,&pid);
+    
     // Update tracker
     updateTimeTracker(&time);
     
     // Print out info
-    printOutInfo(&points,&profile,&time);
+    printOutInfo(&points,&profile,&time,&pid);
 
     ledColorError(&points);
 
