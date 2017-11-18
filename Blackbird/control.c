@@ -5,7 +5,7 @@
 
 // Sets motor speeds based on an input pidCoefficient and sensitivity
 void setMotors(float pidCoefficient,HWProfile * profile) {
-	float defaultPower = 0.5;
+	float defaultPower = 0.8;
 	float pidScale = 1.0;
 
   float left = linearizeMotors(defaultPower - pidScale*pidCoefficient);

@@ -77,7 +77,6 @@ void chooseTarget(pointSet * points, pidProfile * pid) {
   // as measured by sensors 9 and 8.
   float base_vector = atan((points->y[9] - points->y[8])/
 			  (points->x[9] - points->x[8]));
-  echofloat(base_vector);
   if(base_vector < 0) {
     base_vector += PI;
   }
@@ -128,7 +127,12 @@ void chooseTarget(pointSet * points, pidProfile * pid) {
       if (points->obstacleIndex[i] > 0 &&
 	  points->obstacleIndex[i] != points->obstacleIndex[i+1]) {
         left_bound = i*PI/9;
-	right_bound = i*PI/9 - 2*asinf(16/points->r[i]);
+	if (points->r[i] < 16) {
+	  right_bound = i*PI/9 - PI/2;
+	}
+	else {
+	  right_bound = i*PI/9 - 2*asinf(16/points->r[i]);
+	}
 	target_vector = (left_bound + right_bound)/2;
 	isValid = 1;
       }
@@ -152,18 +156,14 @@ void chooseTarget(pointSet * points, pidProfile * pid) {
 	break;
       }
     }
-
-    // If we still can't find a target vector
-    if (pid->target_vector == 0) {
-      pid->target_vector = base_vector;
-      pid->wall_follow_correction = points->r[8] - desired_distance;
-    }
-
+  }
+  
+  // If we still can't find a target vector
+  if (pid->target_vector == 0) {
+    pid->target_vector = base_vector;
+    pid->wall_follow_correction = points->r[9] - desired_distance;
   }
 
-  pid->target_vector = base_vector;
-  pid->wall_follow_correction = points->r[8] - desired_distance;
-  
 }
 
 
@@ -171,9 +171,9 @@ void chooseTarget(pointSet * points, pidProfile * pid) {
 void initpidProfile(pidProfile * pidprofile) {
 
   // PID coefficients
-  pidprofile->k_p = 0.1;
-  pidprofile->k_d = 0.1;
-  pidprofile->k_i = 0.1;
+  pidprofile->k_p = 0.2;
+  pidprofile->k_d = 0;
+  pidprofile->k_i = 0.05;
 
   // Initialize the time tracker for pid
   pidprofile->previousTime = GetTimeUS();
@@ -187,17 +187,23 @@ float pidControl(pidProfile * pid) {
   // The base is the previous correction
   // Add on terms for the proportion, previous change,
   // and wall follow correction (integral)
-  float output = (pid->previousCorrection + 
-	    pid->k_p * pid->target_vector +
-	    pid->k_d * pid->dpreviousCorrection +
-	    pid->k_i * pid->wall_follow_correction);
+  float output = (pid->k_p * (pid->target_vector - PI/2) +
+		  pid->k_d * pid->dpreviousCorrection +
+		  pid->k_i * pid->wall_follow_correction);
+
+  echofloat(output);
 
   // Compute the time change
   float dTime = GetTimeUS() - pid->previousTime;
   // Update the previous time
   pid->previousTime = GetTimeUS();
   // Update the derivative
-  pid->dpreviousCorrection = (output - pid->previousCorrection)/(dTime);
+  if (dTime == 0) {
+    pid->dpreviousCorrection = 0;
+  }
+  else {
+   pid->dpreviousCorrection = (output - pid->previousCorrection)/(dTime);
+  }
   // Update the previous correction
   pid->previousCorrection = output;
 

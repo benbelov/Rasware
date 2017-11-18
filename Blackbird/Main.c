@@ -48,6 +48,9 @@ int main(void){
     cartesian(&points);
     indexObstacles(&points);
     chooseTarget(&points,&pid);
+    float correction = pidControl(&pid);
+
+    setMotors(correction,&profile);
     
     // Update tracker
     updateTimeTracker(&time);
