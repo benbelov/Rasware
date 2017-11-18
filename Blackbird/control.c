@@ -48,7 +48,7 @@ float linearizeMotors(float pidCoefficient) {
 		pidCoefficient = -pidCoefficient;
 	}
 
-	for(int index = 1; i < 7; i++){
+	for(int index = 1; index < 7; index++){
 
 		if (pidCoefficient <= xValues[index]){
 			return neg * (yValues[index-1] + 
