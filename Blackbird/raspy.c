@@ -123,7 +123,10 @@ void printToPySerial(pointSet * points,HWProfile * profile,timeTracker * time, p
   }
 
   floattext(-35,-7.5,time->avgFPS,"black");
-  
+  for(int i =0; i <10; i++)
+  {
+    floattext(-70, 10*i, points->r[i], "black");
+  }
   drawray(0,0,100,pid->target_vector,"blue");
 	  
   // draw the buffer
