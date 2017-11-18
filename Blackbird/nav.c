@@ -34,6 +34,11 @@ void indexObstacles (pointSet * points) {
 	(points->obstacleIndex)[n] = 0;
       }
 
+      else if (n > 2) {
+	obstacleNumber += 1;
+	points->obstacleIndex[n] = 1;
+      }
+
       // otherwise, the wall must just be continuing.
       else {
         (points->obstacleIndex)[n] = 0;
@@ -95,7 +100,7 @@ void chooseTarget(pointSet * points, pidProfile * pid) {
     float right_bound = right_bound_base + points->y[i] * tanf(base_vector);
     if (left_bound < points->x[i] &&
 	points->x[i] < right_bound &&
-	points->r[i] < 50) {
+	points->r[i] < 75) {
       path_blocked = 1;
       break;
     }
@@ -159,7 +164,7 @@ void chooseTarget(pointSet * points, pidProfile * pid) {
   }
   
   // If we still can't find a target vector
-  if (pid->target_vector == 0) {
+  if (pid->target_vector < PI/9) {
     pid->target_vector = base_vector;
     pid->wall_follow_correction = points->r[9] - desired_distance;
   }
@@ -171,9 +176,9 @@ void chooseTarget(pointSet * points, pidProfile * pid) {
 void initpidProfile(pidProfile * pidprofile) {
 
   // PID coefficients
-  pidprofile->k_p = 0.2;
-  pidprofile->k_d = 0;
-  pidprofile->k_i = 0.05;
+  pidprofile->k_p = 0.4;
+  pidprofile->k_d = 0.2;
+  pidprofile->k_i = 0.2;
 
   // Initialize the time tracker for pid
   pidprofile->previousTime = GetTimeUS();
