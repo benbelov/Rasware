@@ -3,18 +3,6 @@
 
 #include "nav.h"
 
-// finds the first element of the input obstacle index
-int findFirstObstacle(pointSet * points, int obstacle) {
-  // find the start index of the current obstacle
-  int currentObstacle = 0;
-  int i = 9;
-  while(obstacle != (points->obstacleIndex)[i] && i>=0) {
-    i -= 1;
-  }
-  return(i);
-}
-
-
 // indexes obstacles; modifies the pointSet directly
 // assigns an int to each distance sensor measurement
 // -1 = not in 'top' obstacle
@@ -81,186 +69,138 @@ void indexObstacles (pointSet * points) {
   }
 }
 
-// Applies filter to raw outputs
-void filterDistances(pointSet * points) {
+
+// Choose the target
+void chooseTarget(pointSet * points, pidProfile * pid) {
+
+  // The base vector is a vector parallel to the wall,
+  // as measured by sensors 9 and 8.
+  float base_vector = atan((points->y[9] - points->y[8])/
+			  (points->x[9] - points->x[8]));
+  echofloat(base_vector);
+  if(base_vector < 0) {
+    base_vector += PI;
+  }
+
+  // Desired distance from the wall for wall follow
+  // Keep above 5cm, since sensors are unreliable at less than 5cm.
+  float desired_distance = 10;
+
+  // Check for obstacles in the path within 50cm
+  float left_bound_base = points->x[9];
+  float right_bound_base = left_bound_base + 20/cosf(base_vector - PI/2);
+
+  int path_blocked = 0;
   for (int i=0; i<10; i++) {
-    if(points->r[i] > 100) {
-      points->r[i] = 17000;
+    float left_bound = left_bound_base + points->y[i] * tanf(base_vector);
+    float right_bound = right_bound_base + points->y[i] * tanf(base_vector);
+    if (left_bound < points->x[i] &&
+	points->x[i] < right_bound &&
+	points->r[i] < 50) {
+      path_blocked = 1;
+      break;
     }
   }
-}
 
-// Finds valid target vectors
-void findValidTargets(pointSet * points) {
-
-  // Reset the total vector counter
-  points->vectorCount = 1;
-
-  float parallelVector = atanf((points->y[8] - points->y[9])/
-			       (points->x[8] - points->x[9]));
-  if(parallelVector < 0) {
-    parallelVector = PI + parallelVector;
+  // No obstacles in the path within 50cm
+  // Wall follow mode
+  if (path_blocked = 0) {
+    pid->target_vector = base_vector;
+    pid->wall_follow_correction = points->r[8] - desired_distance;
   }
-  
-  points->validVectors[0] = parallelVector;
-  points->validVectorLengths[0] = 10;
-  
-  /* // Reset the total vector counter */
-  /* points->vectorCount = 0; */
-    
-  /* for (int i=9; i>0; i--) { */
-    
-  /*   float left_bound; */
-  /*   float right_bound; */
-  /*   float target_vector; */
-  /*   float vector_distance; */
-  /*   int isValid = 0; */
-    
-  /*   // If the point we're looking at is the end of the wall: */
-  /*   if (points->obstacleIndex[i] == 0 && */
-  /*       points->obstacleIndex[i-1] != 0) { */
-  /*     left_bound = i*PI/9; */
-  /*     target_vector = left_bound - asinf(7.62/points->r[i]); */
-  /*     vector_distance = 7.62/tanf(left_bound - target_vector); */
-  /*     right_bound = target_vector - atanf(15.24/vector_distance); */
-  /*     isValid = 1; */
-  /*   } */
 
-    
-  /*   // Else, if the point we're looking at is a block: */
-  /*   else if (points->obstacleIndex[i] != 0 && */
-  /*   	     points->obstacleIndex[i] != -1) { */
-  /*     left_bound = i*PI/9; */
-  /*     right_bound = i*PI/9 - 2*asinf(15.24/points->r[i]); */
-  /*     target_vector = (left_bound + right_bound)/2; */
-  /*     vector_distance = pow(pow(points->r[i],2) - 214.33, 1/2); */
-  /*     isValid = 1; */
-  /*   } */
-    
-  /*   int j = i - 1; */
-  /*   while (j>0 && isValid == 1) { */
+  // Obstacles in the path within 50cm
+  // Go to the outside of them
+  else {
 
-  /*     // If a block is in the cleared sector, and it is within 8": */
-  /*     if (left_bound > PI*j/9 && PI*j/9 > right_bound */
-  /* 	  && */
-  /* 	  points->r[j] < points->r[i] + 20.32 */
-  /* 	  && */
-  /* 	  points->obstacleIndex[i] != -1) { */
-  /* 	  isValid = 0; */
-  /*     } */
-  /*     j -= 1; */
-  /*   } */
+    // The error state is 0.
+    pid->target_vector = 0;
     
-  /*   // If the path has survived all the tests */
-  /*   if (isValid == 1) { */
-  /*     points->vectorCount += 1; */
-  /*     points->validVectors[(points->vectorCount)-1] = target_vector; */
-  /*     points->validVectorLengths[(points->vectorCount)-1] = vector_distance; */
-  /*   } */
-    
-  /* } */
+    for (int i=9; i>0; i--) {
+
+      // The path starts out being invalid.
+      int isValid = 0;
+      float left_bound;
+      float right_bound;
+      float target_vector;
+      
+      // For the end of each obstacle, start off assuming that it's valid
+      if (points->obstacleIndex[i] > 0 &&
+	  points->obstacleIndex[i] != points->obstacleIndex[i+1]) {
+        left_bound = i*PI/9;
+	right_bound = i*PI/9 - 2*asinf(16/points->r[i]);
+	target_vector = (left_bound + right_bound)/2;
+	isValid = 1;
+      }
+
+      // Check for obstacles in the way
+      int j = i-1;
+      while (isValid == 1 && j>0) {
+	// If there's an obstacle within the sector and within 50cm
+	if (left_bound > j*PI/9 &&
+	    j*PI/9 > right_bound &&
+	    points->r[j] < points->r[i] + 50) {
+	  isValid = 0;
+	}
+	j--;
+      }
+
+      // If we pass all the tests
+      if (isValid == 1) {
+	pid->target_vector = target_vector;
+	pid->wall_follow_correction = 0;
+	break;
+      }
+    }
+
+    // If we still can't find a target vector
+    if (pid->target_vector == 0) {
+      pid->target_vector = base_vector;
+      pid->wall_follow_correction = points->r[8] - desired_distance;
+    }
+
+  }
+
+  pid->target_vector = base_vector;
+  pid->wall_follow_correction = points->r[8] - desired_distance;
   
 }
 
-// Not yet implemented
-float chooseTarget(pointSet * points) {
-
-  float targetVector;
-  
-  targetVector = points->validVectors[0];
-  
-  return(targetVector);
-}
 
 // Initialize values for pid control
 void initpidProfile(pidProfile * pidprofile) {
 
   // PID coefficients
-  pidprofile->k_p = 1;
-  pidprofile->k_d = 1000;
+  pidprofile->k_p = 0.1;
+  pidprofile->k_d = 0.1;
+  pidprofile->k_i = 0.1;
 
   // Initialize the time tracker for pid
   pidprofile->previousTime = GetTimeUS();
-  
+  pidprofile->previousCorrection = 0;
+  pidprofile->dpreviousCorrection = 0;
 }
 
-// Takes target vector and applies PID control
-// output is a correction vector between -1 and 1
-float pidControl(float target, pidProfile * pidprofile) {
-
-  // Compute change in time, currently unused
-  long dTime = GetTimeUS() - pidprofile->previousTime;
+// Calculate PID control
+float pidControl(pidProfile * pid) {
   
-  // Compute the error to the given target
-  float error = target - PI/2;
+  // The base is the previous correction
+  // Add on terms for the proportion, previous change,
+  // and wall follow correction (integral)
+  float output = (pid->previousCorrection + 
+	    pid->k_p * pid->target_vector +
+	    pid->k_d * pid->dpreviousCorrection +
+	    pid->k_i * pid->wall_follow_correction);
 
-  // PID formula for the correction
-  float correction = (pidprofile->previousCorrection +
-		      pidprofile->k_p * error +
-		      pidprofile->k_d * pidprofile->dpreviousCorrection);
+  // Compute the time change
+  float dTime = GetTimeUS() - pid->previousTime;
+  // Update the previous time
+  pid->previousTime = GetTimeUS();
+  // Update the derivative
+  pid->dpreviousCorrection = (output - pid->previousCorrection)/(dTime);
+  // Update the previous correction
+  pid->previousCorrection = output;
 
-  // Update the correction
-  pidprofile->previousCorrection = correction;
-
-  // Update the derivative of the correction
-  pidprofile->dpreviousCorrection = (pidprofile->dpreviousCorrection +
-				     correction -
-				     pidprofile->previousCorrection)/2;
-
-  return(correction);
-}
-
-// Takes IR array output and applies PID control
-// I and D terms currently disabled
-float IRpidControl(timeTracker * tracker, pointSet * points)
-{
-  float kp = 1;
-  //float ki = 0.5;
-  //float kd = 1000;
-
-  int line01 = 0;
-
-  if(tracker->lastTime == 0)
-  {
-    tracker->lastTime = (long) GetTimeUS();
-  }
-
-  long nowTime = (long) GetTimeUS();
-  long dTime = nowTime - tracker->lastTime;
-  float error = 0;
-  for(int sensor=0; sensor<5; sensor++)
-  {
-    if((points->line)[sensor] == '1')
-    {
-      error += (sensor-2)/5.0;
-      line01 = 1;
-    }
-  }
-
-  points->irErrInt += (error * dTime);
-
-  //float dErr = (error - points->lastErr) / dTime;
-
-  float out = kp * error;// + kd * dErr; //+ ki * points->irErrInt
+  return(output);
   
-  if(line01 == 0)
-  {
-    if(points->lastErr < 0)
-    {
-      error = -1;
-    }
-    else if (points->lastErr == 0)
-    {
-      error = 0;
-    }
-    else
-    {
-      error = 1;
-    }
-  }
-
-  points->lastErr = error;
-  tracker->lastTime = nowTime;
-
-  return out;
 }

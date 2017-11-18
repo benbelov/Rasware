@@ -26,18 +26,11 @@ struct pointSet {
   char line[8];
   // output of indexObstacles
   int obstacleIndex[10];
-  // valid path vectors
-  float validVectors[10];
-  float validVectorLengths[10];
-  int vectorCount;
   // 0 = display heartBeat; 1 = display errorCode; 2 = display executionMode
   int currentStatusCode;
   int heartBeat;
   int errorCode;
   int executionMode;
-  // integral term for IR PID and previous error
-  float irErrInt;
-  float lastErr;
 };
 
 // definition of the hardware profile structure
@@ -76,5 +69,8 @@ struct pidProfile {
   float dpreviousCorrection;
   float k_p;
   float k_d;
+  float k_i;
+  float target_vector;
+  float wall_follow_correction;
 };
 #endif
