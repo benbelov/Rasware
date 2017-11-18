@@ -43,7 +43,7 @@ int main(void){
     getLineData(&points,&profile);
 
     // Computations
-    filterDistances(&points);
+    //filterDistances(&points);
     cartesian(&points);
     indexObstacles(&points);
     findValidTargets(&points);

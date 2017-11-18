@@ -94,59 +94,71 @@ void filterDistances(pointSet * points) {
 void findValidTargets(pointSet * points) {
 
   // Reset the total vector counter
-  points->vectorCount = 0;
-    
-  for (int i=9; i>0; i--) {
-    
-    float left_bound;
-    float right_bound;
-    float target_vector;
-    float vector_distance;
-    int isValid = 0;
-    
-    // If the point we're looking at is the end of the wall:
-    if (points->obstacleIndex[i] == 0 &&
-        points->obstacleIndex[i-1] != 0) {
-      left_bound = i*PI/9;
-      target_vector = left_bound - asinf(7.62/points->r[i]);
-      vector_distance = 7.62/tanf(left_bound - target_vector);
-      right_bound = target_vector - atanf(15.24/vector_distance);
-      isValid = 1;
-    }
+  points->vectorCount = 1;
 
-    
-    // Else, if the point we're looking at is a block:
-    else if (points->obstacleIndex[i] != 0 &&
-    	     points->obstacleIndex[i] != -1) {
-      left_bound = i*PI/9;
-      right_bound = i*PI/9 - 2*asinf(15.24/points->r[i]);
-      target_vector = (left_bound + right_bound)/2;
-      vector_distance = pow(pow(points->r[i],2) - 214.33, 1/2);
-      isValid = 1;
-    }
-    
-    int j = i - 1;
-    while (j>0 && isValid == 1) {
-
-      // If a block is in the cleared sector, and it is within 8":
-      if (left_bound > PI*j/9 && PI*j/9 > right_bound
-	  &&
-	  points->r[j] < points->r[i] + 20.32
-	  &&
-	  points->obstacleIndex[i] != -1) {
-	  isValid = 0;
-      }
-      j -= 1;
-    }
-    
-    // If the path has survived all the tests
-    if (isValid == 1) {
-      points->vectorCount += 1;
-      points->validVectors[(points->vectorCount)-1] = target_vector;
-      points->validVectorLengths[(points->vectorCount)-1] = vector_distance;
-    }
-    
+  float parallelVector = atanf((points->y[8] - points->y[9])/
+			       (points->x[8] - points->x[9]));
+  if(parallelVector < 0) {
+    parallelVector = PI + parallelVector;
   }
+  
+  points->validVectors[0] = parallelVector;
+  points->validVectorLengths[0] = 10;
+  
+  /* // Reset the total vector counter */
+  /* points->vectorCount = 0; */
+    
+  /* for (int i=9; i>0; i--) { */
+    
+  /*   float left_bound; */
+  /*   float right_bound; */
+  /*   float target_vector; */
+  /*   float vector_distance; */
+  /*   int isValid = 0; */
+    
+  /*   // If the point we're looking at is the end of the wall: */
+  /*   if (points->obstacleIndex[i] == 0 && */
+  /*       points->obstacleIndex[i-1] != 0) { */
+  /*     left_bound = i*PI/9; */
+  /*     target_vector = left_bound - asinf(7.62/points->r[i]); */
+  /*     vector_distance = 7.62/tanf(left_bound - target_vector); */
+  /*     right_bound = target_vector - atanf(15.24/vector_distance); */
+  /*     isValid = 1; */
+  /*   } */
+
+    
+  /*   // Else, if the point we're looking at is a block: */
+  /*   else if (points->obstacleIndex[i] != 0 && */
+  /*   	     points->obstacleIndex[i] != -1) { */
+  /*     left_bound = i*PI/9; */
+  /*     right_bound = i*PI/9 - 2*asinf(15.24/points->r[i]); */
+  /*     target_vector = (left_bound + right_bound)/2; */
+  /*     vector_distance = pow(pow(points->r[i],2) - 214.33, 1/2); */
+  /*     isValid = 1; */
+  /*   } */
+    
+  /*   int j = i - 1; */
+  /*   while (j>0 && isValid == 1) { */
+
+  /*     // If a block is in the cleared sector, and it is within 8": */
+  /*     if (left_bound > PI*j/9 && PI*j/9 > right_bound */
+  /* 	  && */
+  /* 	  points->r[j] < points->r[i] + 20.32 */
+  /* 	  && */
+  /* 	  points->obstacleIndex[i] != -1) { */
+  /* 	  isValid = 0; */
+  /*     } */
+  /*     j -= 1; */
+  /*   } */
+    
+  /*   // If the path has survived all the tests */
+  /*   if (isValid == 1) { */
+  /*     points->vectorCount += 1; */
+  /*     points->validVectors[(points->vectorCount)-1] = target_vector; */
+  /*     points->validVectorLengths[(points->vectorCount)-1] = vector_distance; */
+  /*   } */
+    
+  /* } */
   
 }
 
@@ -155,13 +167,8 @@ float chooseTarget(pointSet * points) {
 
   float targetVector;
   
-  if(points->vectorCount == 0) {
-    targetVector = PI/2;
-  }
-
-  else if(points->vectorCount >= 1) {
-    targetVector = points->validVectors[0];
-  }
+  targetVector = points->validVectors[0];
+  
   return(targetVector);
 }
 

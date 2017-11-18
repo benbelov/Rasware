@@ -124,6 +124,10 @@ void printToPySerial(pointSet * points,HWProfile * profile,timeTracker * time) {
 
   floattext(-35,-7.5,time->avgFPS,"black");
 
+  for(int i=0; i<10; i++) {
+    floattext(-60,10*i,points->r[i],"black");
+  }
+  
   // Draw possible target vectors
   for(int i=0; i<(points->vectorCount); i++) {
     drawray(0,0,points->validVectorLengths[i],points->validVectors[i],"blue");
