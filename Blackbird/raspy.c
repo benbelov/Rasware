@@ -122,6 +122,10 @@ void printToPySerial(pointSet * points,HWProfile * profile,timeTracker * time, p
     numtext(points->x[i],points->y[i],points->obstacleIndex[i],"black");
   }
 
+  floattext(30,-5,pid->k_p*(pid->target_vector - 1.57),"black");
+  floattext(30,-10,pid->k_d*pid->dpreviousCorrection,"black");
+  floattext(30,-15,pid->k_i*pid->wall_follow_correction,"black");
+
   floattext(-35,-7.5,time->avgFPS,"black");
   for(int i =0; i <10; i++)
   {
