@@ -34,9 +34,9 @@ void indexObstacles (pointSet * points) {
 	(points->obstacleIndex)[n] = 0;
       }
 
-      else if (n > 2) {
+      else if (n < 8) {
 	obstacleNumber += 1;
-	points->obstacleIndex[n] = 1;
+	points->obstacleIndex[n] = obstacleNumber;
       }
 
       // otherwise, the wall must just be continuing.
@@ -82,14 +82,24 @@ void chooseTarget(pointSet * points, pidProfile * pid) {
   // as measured by sensors 9 and 8.
   float base_vector = atan((points->y[9] - points->y[8])/
 			  (points->x[9] - points->x[8]));
+  if(points->r[9] > 50) {
+    base_vector = PI/2;
+  }
   if(base_vector < 0) {
     base_vector += PI;
   }
 
   // Desired distance from the wall for wall follow
   // Keep above 5cm, since sensors are unreliable at less than 5cm.
-  float desired_distance = 10;
+  float desired_distance = 15;
 
+  float minimum_distance = 100;
+  for (int i=5; i<10; i++) {
+    if (points->r[i] < minimum_distance) {
+      minimum_distance = points->r[i];
+    }
+  }
+  
   // Check for obstacles in the path within 50cm
   float left_bound_base = points->x[9];
   float right_bound_base = left_bound_base + 20/cosf(base_vector - PI/2);
@@ -100,17 +110,17 @@ void chooseTarget(pointSet * points, pidProfile * pid) {
     float right_bound = right_bound_base + points->y[i] * tanf(base_vector);
     if (left_bound < points->x[i] &&
 	points->x[i] < right_bound &&
-	points->r[i] < 75) {
+	points->r[i] < 80) {
       path_blocked = 1;
       break;
     }
   }
-
+  
   // No obstacles in the path within 50cm
   // Wall follow mode
-  if (path_blocked = 0) {
+  if (path_blocked == 0) {
     pid->target_vector = base_vector;
-    pid->wall_follow_correction = points->r[8] - desired_distance;
+    pid->wall_follow_correction = minimum_distance - desired_distance;
   }
 
   // Obstacles in the path within 50cm
@@ -145,19 +155,25 @@ void chooseTarget(pointSet * points, pidProfile * pid) {
       // Check for obstacles in the way
       int j = i-1;
       while (isValid == 1 && j>0) {
-	// If there's an obstacle within the sector and within 50cm
-	if (left_bound > j*PI/9 &&
-	    j*PI/9 > right_bound &&
-	    points->r[j] < points->r[i] + 50) {
-	  isValid = 0;
-	}
-	j--;
+      	// If there's an obstacle within the sector and within 50cm
+      	if (left_bound > j*PI/9 &&
+      	    j*PI/9 > right_bound &&
+	    j > 3 &&
+      	    points->r[j] < points->r[i] + 20) {
+      	  isValid = 0;
+      	}
+      	j--;
       }
 
       // If we pass all the tests
       if (isValid == 1) {
 	pid->target_vector = target_vector;
-	pid->wall_follow_correction = 0;
+	if (minimum_distance - desired_distance > 0) {
+	  pid->wall_follow_correction = 0;
+	}
+	else {
+	  pid->wall_follow_correction = minimum_distance - desired_distance;
+	}
 	break;
       }
     }
@@ -166,7 +182,7 @@ void chooseTarget(pointSet * points, pidProfile * pid) {
   // If we still can't find a target vector
   if (pid->target_vector < PI/9) {
     pid->target_vector = base_vector;
-    pid->wall_follow_correction = points->r[9] - desired_distance;
+    pid->wall_follow_correction = minimum_distance - desired_distance;
   }
 
 }
@@ -177,8 +193,8 @@ void initpidProfile(pidProfile * pidprofile) {
 
   // PID coefficients
   pidprofile->k_p = 0.4;
-  pidprofile->k_d = 0.2;
-  pidprofile->k_i = 0.2;
+  pidprofile->k_d = 50000;
+  pidprofile->k_i = 0.02;
 
   // Initialize the time tracker for pid
   pidprofile->previousTime = GetTimeUS();
