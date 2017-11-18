@@ -53,3 +53,38 @@ void checkModeChange(HWProfile * profile, pointSet * points){
     profile->previousButtonState = 0;
   }
 }
+
+// Wait for the start:
+void waitForStart(pointSet * points, HWProfile * profile, timeTracker * time) {
+  long CCW_counter = 0;
+  long CW_counter = 0;
+  int go_counter = 0;
+  
+  while(1) {
+    
+    getDistance(points,profile,time);
+    if(points->r[9] > points->r[0]) {
+      CCW_counter +=1;
+    }
+    else {
+      CW_counter += 1;
+    }
+
+    if(points->r[5] < 10 || points->r[4] < 10) {
+      go_counter += 1;
+    }
+    else if(go_counter > 0) {
+      go_counter -= 1;
+    }
+    
+    if(go_counter > 5) {
+      if(CCW_counter > CW_counter) {
+	points->direction = 1;
+      }
+      else {
+	points->direction = 0;
+      }
+      break;
+    }
+  }
+}

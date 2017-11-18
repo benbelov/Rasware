@@ -41,7 +41,7 @@ void indexObstacles (pointSet * points) {
 
       // otherwise, the wall must just be continuing.
       else {
-        (points->obstacleIndex)[n] = 0;
+	(points->obstacleIndex)[n] = 0;
       }
     }
     
@@ -91,7 +91,7 @@ void chooseTarget(pointSet * points, pidProfile * pid) {
 
   // Desired distance from the wall for wall follow
   // Keep above 5cm, since sensors are unreliable at less than 5cm.
-  float desired_distance = 15;
+  float desired_distance = 10;
 
   float minimum_distance = 100;
   for (int i=5; i<10; i++) {
@@ -102,7 +102,7 @@ void chooseTarget(pointSet * points, pidProfile * pid) {
   
   // Check for obstacles in the path within 50cm
   float left_bound_base = points->x[9];
-  float right_bound_base = left_bound_base + 20/cosf(base_vector - PI/2);
+  float right_bound_base = left_bound_base + 15/cosf(base_vector - PI/2);
 
   int path_blocked = 0;
   for (int i=0; i<10; i++) {
@@ -169,14 +169,9 @@ void chooseTarget(pointSet * points, pidProfile * pid) {
       // If we pass all the tests
       if (isValid == 1) {
 	pid->target_vector = target_vector;
-	if (minimum_distance - desired_distance > 0) {
-	  pid->wall_follow_correction = 0;
-    echo("valid target, ignoring k_i");
-	}
-	else {
-	  pid->wall_follow_correction = minimum_distance - desired_distance;
-    echo("valid target, k_i taken into consideration");
-	}
+	pid->wall_follow_correction = minimum_distance - desired_distance;
+	echo("valid target, k_i taken into consideration");
+	
 	break;
       }
     }
@@ -197,8 +192,8 @@ void initpidProfile(pidProfile * pidprofile) {
 
   // PID coefficients
   pidprofile->k_p = 0.4;
-  pidprofile->k_d = 200000;
-  pidprofile->k_i = 0.03;
+  pidprofile->k_d = 100000;
+  pidprofile->k_i = 0.04;
 
   // Initialize the time tracker for pid
   pidprofile->previousTime = GetTimeUS();
@@ -208,10 +203,18 @@ void initpidProfile(pidProfile * pidprofile) {
 
 // Calculate PID control
 float pidControl(pidProfile * pid) {
+
+  // cap on integral term
+  if(pid->wall_follow_correction > 20) {
+    pid->wall_follow_correction = 20;
+  }
+  else if(pid->wall_follow_correction < -20) {
+    pid->wall_follow_correction = -20;
+  }
   
   // The base is the previous correction
   // Add on terms for the proportion, previous change,
-  // and wall follow correction (integral)
+  // and wall follow correction (integral)  
   float output = (pid->k_p * (pid->target_vector - PI/2) +
 		  pid->k_d * pid->dpreviousCorrection +
 		  pid->k_i * pid->wall_follow_correction);

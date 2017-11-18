@@ -4,13 +4,21 @@
 #include "control.h"
 
 // Sets motor speeds based on an input pidCoefficient and sensitivity
-void setMotors(float pidCoefficient,HWProfile * profile) {
-	float defaultPower = 0.8;
-	float pidScale = 1.0;
-
-  float left = linearizeMotors(defaultPower - pidScale*pidCoefficient);
-  float right = linearizeMotors(defaultPower + pidScale*pidCoefficient);
-
+void setMotors(float pidCoefficient,HWProfile * profile, pointSet * points) {
+  float defaultPower = 0.8;
+  float pidScale = 1.0;
+  float left;
+  float right;
+  
+  if (points->direction == 1) {
+    left = linearizeMotors(defaultPower - pidScale*pidCoefficient);
+    right = linearizeMotors(defaultPower + pidScale*pidCoefficient);
+  }
+  else {
+    right = linearizeMotors(defaultPower - pidScale*pidCoefficient);
+    left = linearizeMotors(defaultPower + pidScale*pidCoefficient);
+  }
+  
   SetMotor(profile->left, left);
   SetMotor(profile->right, right);
 }

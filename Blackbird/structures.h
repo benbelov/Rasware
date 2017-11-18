@@ -15,6 +15,8 @@
 // stores sets of points and distances
 typedef struct pointSet pointSet;
 struct pointSet {
+  // Direction: 0 = CW, 1 = CCW
+  int direction;
   // x,y coordinates, computed from r
   float x[10];
   float y[10];
@@ -31,6 +33,7 @@ struct pointSet {
   int heartBeat;
   int errorCode;
   int executionMode;
+  float minimum_distance;
 };
 
 // definition of the hardware profile structure

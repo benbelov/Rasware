@@ -8,6 +8,7 @@
 #include <RASLib/inc/adc.h>
 
 #include "structures.h"
+#include "sensors.h"
 
 // hardware.h in /Blackbird
 // contains hardware settings and initialization subroutines
@@ -17,5 +18,8 @@ void initHardware(HWProfile * profile);
 
 // checks if the button is pressed
 void checkModeChange(HWProfile * profile, pointSet * points);
+
+// wait for start
+void waitForStart(pointSet * points, HWProfile * profile, timeTracker * time);
 
 #endif

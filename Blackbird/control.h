@@ -10,7 +10,7 @@
 // Contains motor-control subroutines
 
 // Sets motor speeds based on an input pidCoefficient and sensitivity
-void setMotors(float pidCoefficient,HWProfile * profile);
+void setMotors(float pidCoefficient,HWProfile * profile, pointSet * points);
 
 // Linearizes the motor profile
 float linearizeMotors(float pidCoefficient);

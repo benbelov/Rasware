@@ -105,9 +105,9 @@ long getDistance(pointSet * points, HWProfile * profile, timeTracker * tracker){
       }
 
       // Both pings received
-      /* if( end_time_1 != 0 && end_time_2 != 0) { */
-      /* 	break; */
-      /* } */
+      if( end_time_1 != 0 && end_time_2 != 0) {
+      	break;
+      }
 
 
       // Sets start times and end times when appropriate
@@ -129,10 +129,16 @@ long getDistance(pointSet * points, HWProfile * profile, timeTracker * tracker){
     // Save Information
     // Information is saved to a pointSet struct
     // The trigger pair consists of two sensors 90 degrees from each other
-    //(points->r)[i] = ((points->r)[i] + distance_pair[0])/2;
-    //(points->r)[i+5] = ((points->r)[i+1] + distance_pair[1])/2;
-    (points->r)[i] = distance_pair[0];
-    (points->r)[i+5] = distance_pair[1];
+    if (points->direction == 1) {
+      (points->r)[i] = distance_pair[0];
+      (points->r)[i+5] = distance_pair[1];
+    }
+    else {
+      (points->r)[9-i] = distance_pair[0];
+      (points->r)[4-i] = distance_pair[1];
+    }
+
+    
   }
 
   // Return the total function time

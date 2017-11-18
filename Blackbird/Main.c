@@ -11,6 +11,7 @@ int main(void){
   pointSet points;
   points.currentStatusCode = 0;
   points.executionMode = 1;
+  points.direction = 0;
 
   // Initialize HWProfile struct for storing hardware info
   // and set up motors and GPIO
@@ -32,6 +33,9 @@ int main(void){
 
   // Initialize python listener
   initializeRasPy();
+
+  // Wait for start
+  waitForStart(&points,&profile,&time);
   
   while(true) {
 
@@ -50,7 +54,7 @@ int main(void){
     chooseTarget(&points,&pid);
     float correction = pidControl(&pid);
 
-    setMotors(correction,&profile);
+    setMotors(correction,&profile,&points);
     
     // Update tracker
     updateTimeTracker(&time);

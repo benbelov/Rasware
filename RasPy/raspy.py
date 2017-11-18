@@ -13,12 +13,13 @@ class tm4c_launchpad:
     def __init__(self, path):
         
         # 115200 baud is a huge improvement over 9600
-        try:
-            self.device = serial.Serial(path,115200,timeout=1)
-            print("launchpad connected: "+path)
-        except:
-            print("no launchpad found.")
-            exit()
+        while(1):
+            try:
+                self.device = serial.Serial(path,115200,timeout=1)
+                print("launchpad connected: "+path)
+                break
+            except:
+                print("no launchpad found.")
             
         # dict for storing color definitions
         self.colors = {"black":(0,0,0),"white":(255,255,255)}
